@@ -1,0 +1,15 @@
+# Frontend dependencies & builds
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+
+# Backend dependencies & builds
+backend/node_modules/
+backend/target/
+backend/.env
+
+# IDE & System
+.idea/
+.vscode/
+.DS_Store
