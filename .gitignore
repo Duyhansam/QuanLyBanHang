@@ -13,3 +13,5 @@ backend/.env
 .idea/
 .vscode/
 .DS_Store
+
+my-fullstack-app/backend/src/main/resources/application.properties
