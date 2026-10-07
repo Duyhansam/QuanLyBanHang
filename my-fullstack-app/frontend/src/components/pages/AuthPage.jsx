@@ -16,13 +16,14 @@ export default function AuthPage() {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError(""); // Xóa lỗi khi người dùng gõ
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // 1. Validation cơ bản ở Frontend
@@ -36,28 +37,58 @@ export default function AuthPage() {
         setError("Vui lòng nhập họ và tên!");
         return;
       }
+      if (formData.password.length < 8) {
+        setError("Mật khẩu phải có ít nhất 8 ký tự!");
+        return;
+      }
       if (formData.password !== formData.confirmPassword) {
         setError("Mật khẩu xác nhận không trùng khớp!");
         return;
       }
     }
 
-    // 2. Giả lập thành công (Chờ kết nối Spring Boot API sau)
-    /* 
-      HOẶC KẾT NỐI API Ở ĐÂY:
-      const endpoint = isLogin ? "/api/v1/auth/login" : "/api/v1/auth/register";
-      axios.post(endpoint, formData)...
-    */
+    // 2. Gọi API Spring Boot
+    const endpoint = isLogin ? "/api/v1/auth/login" : "/api/v1/auth/register";
+    const body = isLogin
+      ? { email: formData.email, password: formData.password }
+      : {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        };
 
-    const mockUser = {
-      email: formData.email,
-      name: formData.fullName || formData.email.split("@")[0],
-      token: "mock-jwt-token-123456",
-    };
+    setLoading(true);
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.message || "Có lỗi xảy ra, vui lòng thử lại!");
+        return;
+      }
 
-    localStorage.setItem("user", JSON.stringify(mockUser));
-    alert(isLogin ? "Đăng nhập thành công!" : "Đăng ký thành công!");
-    navigate("/"); // Chuyển về trang chủ sau khi thành công
+      // Lưu theo đúng dạng cũ { email, name, token } + thêm id, role
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.fullName,
+          role: data.user.role,
+          token: data.token,
+        }),
+      );
+      navigate("/"); // Chuyển về trang chủ sau khi thành công
+    } catch {
+      setError(
+        "Không kết nối được máy chủ. Hãy kiểm tra backend đã chạy chưa!",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -218,9 +249,14 @@ export default function AuthPage() {
           {/* Nút Submit */}
           <button
             type="submit"
-            className="w-full bg-black text-white py-3 rounded-xl font-semibold text-sm hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 group mt-2"
+            disabled={loading}
+            className="w-full bg-black text-white py-3 rounded-xl font-semibold text-sm hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 group mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
+            {loading
+              ? "Đang xử lý..."
+              : isLogin
+                ? "Đăng nhập"
+                : "Tạo tài khoản"}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </form>
