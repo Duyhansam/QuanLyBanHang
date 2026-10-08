@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ShoppingCart, User, Heart, Search, X } from "lucide-react";
+import { ShoppingCart, Heart, Search, X } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import Logo from "./Logo.jsx";
 import navItems from "./NavItem.js";
+import UserMenu from "./UserMenu.jsx";
 
 import useNavbarSearch from "../hooks/useNavbarSearch.js";
 
@@ -139,12 +140,7 @@ function Navbar({ wishlistCount, cartCount }) {
               </span>
             )}
           </Link>
-          <Link
-            to="/login"
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-          >
-            <User className="w-5 h-5 text-neutral-700  hover:text-black" />
-          </Link>
+          <UserMenu />
         </div>
       </div>
 

@@ -19,11 +19,7 @@ export default function ProductOptions({
   const handleCreateCartItem = () => {
     return {
       ...product,
-      cartItemId: `${product.id}-${selectedSize || "M"}-${
-        selectedVariant
-          ? selectedVariant.colorName || selectedVariant.id
-          : "default"
-      }`,
+      cartItemId: `${product.id}-${selectedSize || "M"}-${selectedVariant?.id || "default"}`,
       selectedSize: selectedSize || "M",
       quantity: quantity,
       image:

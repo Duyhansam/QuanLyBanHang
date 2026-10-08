@@ -46,7 +46,7 @@ export default function ComparePage({ onAddToCart }) {
       image: variant?.image || p.image,
       selectedSize: size,
       selectedColor: variant?.colorName || null,
-      cartItemId: `${p.id}-${size}-${variant?.colorName || variant?.id || "default"}`,
+      cartItemId: `${p.id}-${size}-${variant?.id || "default"}`, // cùng quy tắc với ProductCard
       quantity: 1,
     });
     toast.success("Product added to cart!");
@@ -100,6 +100,7 @@ export default function ComparePage({ onAddToCart }) {
 
       <div className="overflow-x-auto">
         <div className="min-w-[640px]">
+          {/* Hàng sản phẩm: ảnh (đổi theo màu đã chọn) + tên */}
           <div
             className="grid gap-6 pb-6"
             style={{ gridTemplateColumns: cols }}

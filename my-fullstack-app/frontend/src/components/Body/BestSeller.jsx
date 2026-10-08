@@ -1,12 +1,20 @@
-import PRDhome from "../../data/PRDhome.js";
 import { Heart, Star, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useFetch } from "../hooks/useFetch";
 
 export default function BestSeller({
   wishlist,
   onToggleWishlist,
   onAddToCart,
 }) {
+  const {
+    data: bestSellers,
+    loading,
+    error,
+  } = useFetch("/api/products?category=BESTSELLER");
+
+  const getImage = (product) => product.variants?.[0]?.image ?? "";
+
   return (
     <section className="mx-16 mt-12 flex flex-col gap-6">
       <div className="flex justify-between items-center ">
@@ -18,8 +26,14 @@ export default function BestSeller({
         </span>
       </div>
 
+      {loading && <p className="text-sm text-gray-500">Đang tải sản phẩm...</p>}
+      {error && (
+        <p className="text-sm text-red-500">Lỗi tải dữ liệu: {error}</p>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {PRDhome.map((product) => {
+        {bestSellers.map((product) => {
+          const image = getImage(product);
           const isLiked = wishlist
             ? wishlist.some((fav) => fav.id === product.id)
             : false;
@@ -33,7 +47,8 @@ export default function BestSeller({
               <div className="relative w-full h-48 flex items-center justify-center mb-4 overflow-hidden">
                 <button
                   onClick={() =>
-                    onToggleWishlist && onToggleWishlist(product, !isLiked)
+                    onToggleWishlist &&
+                    onToggleWishlist({ ...product, image }, !isLiked)
                   }
                   className="absolute z-10 top-2 right-2 p-2 bg-white rounded-full shadow-sm transition cursor-pointer"
                   title="Yêu thích"
@@ -52,7 +67,7 @@ export default function BestSeller({
                   className="w-full h-full flex items-center justify-center"
                 >
                   <img
-                    src={product.image}
+                    src={image}
                     alt={product.name}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer"
                   />
@@ -68,7 +83,7 @@ export default function BestSeller({
                     </span>
                   </Link>
                   <span className="text-xs text-neutral-500 mt-0.5 block">
-                    {product.category}
+                    {product.brand?.name}
                   </span>
                 </div>
 
@@ -79,7 +94,9 @@ export default function BestSeller({
                   </span>
 
                   <button
-                    onClick={() => onAddToCart && onAddToCart(product)}
+                    onClick={() =>
+                      onAddToCart && onAddToCart({ ...product, image })
+                    }
                     className="p-2 bg-black text-white rounded-full hover:bg-neutral-800 transition cursor-pointer shadow-sm"
                     title="Thêm vào giỏ hàng"
                   >
@@ -91,7 +108,7 @@ export default function BestSeller({
                 <div className="flex items-center gap-1 text-xs text-neutral-600 mt-2">
                   <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
                   <span>{product.rating}</span>
-                  <span className="text-neutral-400">({product.reviews})</span>
+                  <span className="text-neutral-400">{product.reviews}</span>
                 </div>
               </div>
             </div>

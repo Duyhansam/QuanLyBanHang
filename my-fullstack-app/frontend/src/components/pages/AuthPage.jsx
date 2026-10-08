@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail, User, ArrowRight } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true); // true: Đăng nhập, false: Đăng ký
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { isLoggedIn, login } = useAuth();
+
+  // Đã đăng nhập rồi thì không cần ở trang login nữa
+  useEffect(() => {
+    if (isLoggedIn) navigate("/", { replace: true });
+  }, [isLoggedIn, navigate]);
 
   // State lưu dữ liệu form
   const [formData, setFormData] = useState({
@@ -70,17 +77,14 @@ export default function AuthPage() {
         return;
       }
 
-      // Lưu theo đúng dạng cũ { email, name, token } + thêm id, role
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: data.user.id,
-          email: data.user.email,
-          name: data.user.fullName,
-          role: data.user.role,
-          token: data.token,
-        }),
-      );
+      // Lưu vào context + localStorage để Navbar cập nhật ngay
+      login({
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.fullName,
+        role: data.user.role,
+        token: data.token,
+      });
       navigate("/"); // Chuyển về trang chủ sau khi thành công
     } catch {
       setError(
