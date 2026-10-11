@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "./useAuth";
 import { apiFetch, once, findVariantId } from "./userApi";
+import { DEFAULT_SIZE } from "../constants/sizes";
 
 const GUEST_KEY = "my_cart";
 
@@ -17,13 +18,13 @@ const saveGuest = (list) =>
 
 // Khóa của một dòng trong giỏ (giữ nguyên cách tạo như trước)
 const idOf = (item) =>
-  item.cartItemId || `${item.id}-${item.selectedSize || "M"}`;
+  item.cartItemId || `${item.id}-${item.selectedSize || DEFAULT_SIZE}`;
 
 const toRequest = (item) => ({
   cartItemId: idOf(item),
   productId: item.id,
   variantId: findVariantId(item),
-  selectedSize: item.selectedSize || "M",
+  selectedSize: item.selectedSize || DEFAULT_SIZE,
   quantity: item.quantity || 1,
 });
 
@@ -129,7 +130,7 @@ export function useListCart() {
 
   // Thêm vào giỏ hàng
   const handleAddToCart = (product) => {
-    const selectedSize = product.selectedSize || "M";
+    const selectedSize = product.selectedSize || DEFAULT_SIZE;
     const uniqueId = product.cartItemId || `${product.id}-${selectedSize}`;
     const quantityToAdd = product.quantity || 1;
     const prevCart = cartRef.current;

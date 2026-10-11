@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom"; // Đã thêm useLocation
 import { ArrowLeft, CheckCircle2, ShieldCheck, Truck } from "lucide-react";
 import toast from "react-hot-toast";
+import { DEFAULT_SIZE } from "../constants/sizes";
 
 export default function CheckoutPage({ cart, onClearCart }) {
   const navigate = useNavigate();
@@ -248,7 +249,8 @@ export default function CheckoutPage({ cart, onClearCart }) {
             <div className="max-h-60 overflow-y-auto divide-y divide-gray-200 mb-4 pr-1">
               {itemsToCheckout.map((item) => {
                 const cartItemId =
-                  item.cartItemId || `${item.id}-${item.selectedSize || "M"}`;
+                  item.cartItemId ||
+                  `${item.id}-${item.selectedSize || DEFAULT_SIZE}`;
                 return (
                   <div
                     key={cartItemId}

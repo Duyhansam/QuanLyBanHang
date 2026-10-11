@@ -44,7 +44,8 @@ export default function CartPage({ cart, onRemove, onIncrease, onDecrease }) {
         <div className="lg:col-span-2 divide-y divide-gray-200">
           {cart.map((item) => {
             const cartItemId =
-              item.cartItemId || `${item.id}-${item.selectedSize || "M"}`;
+              item.cartItemId ||
+              `${item.id}-${item.selectedSize || "37"}-${item.selectedVariant?.id || "default"}`;
 
             return (
               <div
@@ -68,7 +69,7 @@ export default function CartPage({ cart, onRemove, onIncrease, onDecrease }) {
                   <p className="text-xs text-gray-500 mb-2">
                     Size:{" "}
                     <span className="font-semibold text-black">
-                      {item.selectedSize || "M"}
+                      {item.selectedSize || "37"}
                     </span>
                   </p>
                   <p className="text-sm font-semibold text-black mb-4">

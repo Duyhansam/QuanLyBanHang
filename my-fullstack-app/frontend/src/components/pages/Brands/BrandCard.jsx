@@ -1,6 +1,11 @@
+import { Link } from "react-router-dom";
+
 export default function BrandCard({ brand }) {
   return (
-    <div className="group bg-white rounded-xl overflow-hidden border border-gray-200 flex flex-col transition-all duration-300 hover:shadow-md hover:border-black cursor-pointer p-6">
+    <Link
+      to={`/brands/${brand.slug}`}
+      className="group bg-white rounded-xl overflow-hidden border border-gray-200 flex flex-col transition-all duration-300 hover:shadow-md hover:border-black cursor-pointer p-6"
+    >
       {/* Vùng hiển thị logo nằm trong ô trắng bo góc tinh tế giống ảnh mẫu */}
       <div className="relative aspect-[16/9] flex items-center justify-center mb-4 bg-white">
         <img
@@ -30,6 +35,6 @@ export default function BrandCard({ brand }) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

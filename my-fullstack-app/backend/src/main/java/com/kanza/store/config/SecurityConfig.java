@@ -9,6 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,6 +21,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,7 +37,9 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 public class SecurityConfig {
 
     // Các đường dẫn bắt buộc đăng nhập. Mọi thứ còn lại giữ nguyên như cũ (công khai).
-    private static final String[] PROTECTED = { "/api/v1/auth/me", "/api/cart/**", "/api/wishlist/**" };
+    private static final String[] PROTECTED = { "/api/v1/auth/me", "/api/cart/**", "/api/wishlist/**" }; 
+  // Thêm / sửa / xóa sản phẩm: chỉ tài khoản có role ADMIN. Các GET vẫn công khai.
+    private static final String[] PRODUCT_PATHS = { "/api/products", "/api/products/**" };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, BearerTokenResolver resolver) throws Exception {
@@ -44,25 +49,44 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PROTECTED).authenticated()
+                        .requestMatchers(HttpMethod.POST, PRODUCT_PATHS).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, PRODUCT_PATHS).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, PRODUCT_PATHS).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, PRODUCT_PATHS).hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .oauth2ResourceServer(oauth -> oauth
                         .bearerTokenResolver(resolver)
-                        .jwt(Customizer.withDefaults()));
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
         return http.build();
     }
 
     // Chỉ đọc token ở các đường dẫn cần đăng nhập. Nhờ vậy token hết hạn/sai
     // không làm hỏng các API công khai như /api/products.
-    @Bean
+   @Bean
     public BearerTokenResolver bearerTokenResolver() {
         DefaultBearerTokenResolver delegate = new DefaultBearerTokenResolver();
         return request -> {
             String path = request.getRequestURI();
+            String method = request.getMethod();
+            boolean isRead = "GET".equalsIgnoreCase(method)
+                    || "HEAD".equalsIgnoreCase(method)
+                    || "OPTIONS".equalsIgnoreCase(method);
             boolean needsAuth = path.equals("/api/v1/auth/me")
                     || path.startsWith("/api/cart")
-                    || path.startsWith("/api/wishlist");
+                    || path.startsWith("/api/wishlist")
+                    || (path.startsWith("/api/products") && !isRead); 
             return needsAuth ? delegate.resolve(request) : null;
         };
+    }
+  // Đọc claim "role" trong JWT (USER / ADMIN) và đổi thành quyền ROLE_USER / ROLE_ADMIN
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();
+        authorities.setAuthoritiesClaimName("role");
+        authorities.setAuthorityPrefix("ROLE_");
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(authorities);
+        return converter;
     }
 
     @Bean

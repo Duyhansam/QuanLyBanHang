@@ -1,6 +1,7 @@
 import { Heart, Star, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
+import toast from "react-hot-toast";
 
 export default function BestSeller({
   wishlist,
@@ -46,10 +47,16 @@ export default function BestSeller({
               {/* Phần Ảnh & Nút Wishlist */}
               <div className="relative w-full h-48 flex items-center justify-center mb-4 overflow-hidden">
                 <button
-                  onClick={() =>
-                    onToggleWishlist &&
-                    onToggleWishlist({ ...product, image }, !isLiked)
-                  }
+                  onClick={() => {
+                    if (onToggleWishlist) {
+                      onToggleWishlist({ ...product, image }, !isLiked);
+                    }
+                    if (isLiked) {
+                      toast.error("Removed from wishlist");
+                    } else {
+                      toast.success("Product added to wishlist!");
+                    }
+                  }}
                   className="absolute z-10 top-2 right-2 p-2 bg-white rounded-full shadow-sm transition cursor-pointer"
                   title="Yêu thích"
                 >
@@ -94,9 +101,12 @@ export default function BestSeller({
                   </span>
 
                   <button
-                    onClick={() =>
-                      onAddToCart && onAddToCart({ ...product, image })
-                    }
+                    onClick={() => {
+                      if (onAddToCart) {
+                        onAddToCart({ ...product, image });
+                      }
+                      toast.success("Product added to cart!");
+                    }}
                     className="p-2 bg-black text-white rounded-full hover:bg-neutral-800 transition cursor-pointer shadow-sm"
                     title="Thêm vào giỏ hàng"
                   >

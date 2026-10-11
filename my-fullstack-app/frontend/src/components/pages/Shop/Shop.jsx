@@ -23,9 +23,12 @@ export default function Shop({
   const [searchParams] = useSearchParams();
   const keyword = (searchParams.get("q") || "").trim();
 
+  const MIN_PRODUCT_ID = 6;
+
   const url = keyword
     ? `/api/products/search?q=${encodeURIComponent(keyword)}`
-    : "/api/products?category=SHOP";
+    : `/api/products?minId=${MIN_PRODUCT_ID}`;
+
   const { data: products, loading, error } = useFetch(url);
 
   useEffect(() => {
@@ -42,7 +45,8 @@ export default function Shop({
     );
   }
 
-  const sortedProducts = sortProducts(products, sortBy);
+  const visibleSource = (products || []).filter((p) => p.id >= MIN_PRODUCT_ID);
+  const sortedProducts = sortProducts(visibleSource, sortBy);
   const displayedProducts = sortedProducts.slice(0, visibleCount);
 
   return (

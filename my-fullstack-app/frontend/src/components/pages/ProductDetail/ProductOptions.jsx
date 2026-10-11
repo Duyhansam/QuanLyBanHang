@@ -1,5 +1,6 @@
 import { Heart, ShoppingCart, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { SHOE_SIZES, DEFAULT_SIZE } from "../../constants/sizes";
 import toast from "react-hot-toast"; // 1. Import toast
 
 export default function ProductOptions({
@@ -19,8 +20,8 @@ export default function ProductOptions({
   const handleCreateCartItem = () => {
     return {
       ...product,
-      cartItemId: `${product.id}-${selectedSize || "M"}-${selectedVariant?.id || "default"}`,
-      selectedSize: selectedSize || "M",
+      cartItemId: `${product.id}-${selectedSize || DEFAULT_SIZE}-${selectedVariant?.id || "default"}`,
+      selectedSize: selectedSize || DEFAULT_SIZE,
       quantity: quantity,
       image:
         selectedVariant && selectedVariant.image
@@ -65,8 +66,8 @@ export default function ProductOptions({
         <label className="block text-xs font-bold uppercase text-black mb-2">
           SIZE:
         </label>
-        <div className="flex items-center gap-2">
-          {(product.sizes || ["S", "M", "L", "XL"]).map((size) => (
+        <div className="flex flex-wrap items-center gap-2">
+          {(product.sizes || SHOE_SIZES).map((size) => (
             <button
               key={size}
               onClick={() => onSelectSize(size)}

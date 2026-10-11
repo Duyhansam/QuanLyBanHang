@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { ArrowUpDown, ShoppingBag, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCompare } from "../../hooks/useCompare";
+import { SHOE_SIZES } from "../../constants/sizes";
 
 // Giống trang chi tiết: nếu API không trả sizes thì dùng danh sách mặc định
-const DEFAULT_SIZES = ["S", "M", "L", "XL"];
+const DEFAULT_SIZES = SHOE_SIZES;
 
 // Các hàng thuộc tính tĩnh (Color / Size được render riêng vì có tương tác)
 const ROWS = [

@@ -3,6 +3,7 @@ import { Heart, ShoppingCart, ArrowUp, ArrowDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useCompare } from "../../hooks/useCompare";
+import { DEFAULT_SIZE } from "../../constants/sizes";
 
 function BasicCardBase({
   product,
@@ -53,7 +54,7 @@ function BasicCardBase({
   const handleAddToCartClick = () => {
     if (onAddToCart) {
       const activeImage = selectedVariant?.image || product.image;
-      const selectedSize = "M";
+      const selectedSize = DEFAULT_SIZE;
 
       const itemToCart = {
         ...product,

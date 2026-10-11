@@ -1,4 +1,5 @@
 import { useFetch } from "../hooks/useFetch";
+import { Link } from "react-router-dom";
 
 export default function BrandSlider() {
   const { data: brands } = useFetch("/api/brands");
@@ -11,8 +12,10 @@ export default function BrandSlider() {
 
       <div className="flex items-center gap-2 sm:gap-4 md:gap-6 overflow-hidden flex-nowrap py-1">
         {brands.map((brand) => (
-          <div
+          <Link
             key={brand.id}
+            to={`/brands/${brand.slug}`}
+            title={brand.name}
             className="flex items-center justify-center p-2 bg-white rounded-xl border border-neutral-200 shadow-sm  h-12 hover:border-black transition cursor-pointer w-full"
           >
             <img
@@ -20,13 +23,15 @@ export default function BrandSlider() {
               alt={brand.name}
               className="w-full h-full object-contain"
             />
-          </div>
+          </Link>
         ))}
       </div>
 
-      <span className="text-xs text-black font-bold cursor-pointer hover:underline whitespace-nowrap">
-        View all
-      </span>
+      <Link to="/brands" className="flex items-center gap-1">
+        <span className="text-xs text-black font-bold cursor-pointer hover:underline whitespace-nowrap">
+          View all
+        </span>
+      </Link>
     </section>
   );
 }

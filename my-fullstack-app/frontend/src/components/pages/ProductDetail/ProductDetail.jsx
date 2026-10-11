@@ -3,6 +3,7 @@ import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import ProductOptions from "./ProductOptions";
 import ProductPolicy from "./ProductPolicy";
+import { DEFAULT_SIZE } from "../../constants/sizes";
 
 export default function ProductDetail({
   product,
@@ -16,7 +17,9 @@ export default function ProductDetail({
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.[0] || null,
   );
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "M");
+  const [selectedSize, setSelectedSize] = useState(
+    product.sizes?.[0] || DEFAULT_SIZE,
+  );
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(isInitiallyLiked || false);
 

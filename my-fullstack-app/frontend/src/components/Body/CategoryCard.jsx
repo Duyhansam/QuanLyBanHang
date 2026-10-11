@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
+
+const toSlug = (name) => name.trim().toLowerCase().replace(/\s+/g, "-");
 
 export default function CategoryCard() {
   const { data: categories } = useFetch("/api/home/categories");
@@ -11,8 +14,9 @@ export default function CategoryCard() {
 
       <div className="flex items-center justify-between gap-2 sm:gap-3 md:gap-4 flex-nowrap py-2">
         {categories.map((cat) => (
-          <div
+          <Link
             key={cat.id}
+            to={`/category/${toSlug(cat.name)}`}
             className="flex flex-col items-center justify-between p-4 bg-gray-50 rounded-2xl border border-neutral-200 shadow-sm hover:border-black transition cursor-pointer flex-1 min-w-0 h-28 sm:h-32 group"
           >
             <div className="w-full h-20 flex items-center justify-center">
@@ -25,7 +29,7 @@ export default function CategoryCard() {
             <span className="text-xs font-semibold text-neutral-800 mt-2">
               {cat.name}
             </span>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

@@ -16,13 +16,10 @@ export async function apiFetch(path, token, options = {}) {
     throw error;
   }
 
-  // 204 No Content (hoặc body rỗng) => không có JSON để đọc
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
 
-// Dùng khi React StrictMode (dev) chạy effect 2 lần: các lần gọi cùng một khóa
-// sẽ dùng chung 1 request, tránh gộp giỏ hàng 2 lần làm số lượng bị nhân đôi
 const inflight = new Map();
 
 export function once(key, factory) {
@@ -40,6 +37,8 @@ export function findVariantId(item) {
   if (byImage) return byImage.id;
 
   // cartItemId có dạng "<productId>-<size>-<variantId>"
-  const last = String(item.cartItemId ?? "").split("-").pop();
+  const last = String(item.cartItemId ?? "")
+    .split("-")
+    .pop();
   return /^\d+$/.test(last) ? Number(last) : null;
 }

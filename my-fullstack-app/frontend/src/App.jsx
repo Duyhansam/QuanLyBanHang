@@ -11,7 +11,10 @@ import Men from "./components/pages/Men/Men.jsx";
 import Women from "./components/pages/Women/Women.jsx";
 import Kid from "./components/pages/Kid/Kid.jsx";
 import Brands from "./components/pages/Brands/Brands.jsx";
+import BrandPage from "./components/pages/Brands/BrandPage.jsx";
 import Sale from "./components/pages/Sale/Sale.jsx";
+import CategoryPage from "./components/pages/Category/CategoryPage.jsx";
+import AdminPage from "./components/pages/Admin/AdminPage.jsx";
 import CheckoutPage from "./components/pages/CheckoutPage.jsx";
 import ProductDetailWrapper from "./components/pages/ProductDetail/ProductDetailWrapper.jsx";
 import ScrollToTop from "./components/OptimizeUI/ScrollToTop.jsx";
@@ -101,9 +104,30 @@ function AppContent() {
             />
             <Route path="/brands" element={<Brands />} />
             <Route
+              path="/brands/:slug"
+              element={
+                <BrandPage
+                  wishlist={wishlist}
+                  handleAddToWishlist={handleToggleWishlist}
+                  handleAddToCart={handleAddToCart}
+                />
+              }
+            />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route
               path="/sale"
               element={
                 <Sale
+                  wishlist={wishlist}
+                  handleAddToWishlist={handleToggleWishlist}
+                  handleAddToCart={handleAddToCart}
+                />
+              }
+            />
+            <Route
+              path="/category/:slug"
+              element={
+                <CategoryPage
                   wishlist={wishlist}
                   handleAddToWishlist={handleToggleWishlist}
                   handleAddToCart={handleAddToCart}
