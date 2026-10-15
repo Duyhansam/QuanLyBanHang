@@ -78,8 +78,16 @@ kanza-store/
     │   └── context/               # Quản lý trạng thái ứng dụng (AuthContext, CartContext)
     └── package.json               # Các gói phụ thuộc Frontend
 
-🚀 Hướng dẫn cài đặt & Chạy ứng dụngYêu cầu tiên quyết (Prerequisites)Java: JDK 17+Node.js: v18+ (dành cho Frontend)Database: MySQL Server 8.0+Build Tool: Maven1. Cấu hình & Chạy Backend (Spring Boot)Clone dự án:Bashgit clone [https://github.com/your-username/kanza-store.git](https://github.com/your-username/kanza-store.git)
+🚀 Hướng dẫn cài đặt & Chạy ứng dụng
+Yêu cầu tiên quyết (Prerequisites)
+Java: JDK 17+
+Node.js: v18+ (dành cho Frontend)
+Database: MySQL Server 8.0+
+Build Tool: Maven1.
+Cấu hình & Chạy Backend (Spring Boot)
+Clone dự án:Bashgit clone [https://github.com/your-username/kanza-store.git](https://github.com/your-username/kanza-store.git)
 cd kanza-store/backend
+
 Cấu hình Cơ sở dữ liệu:Mở file src/main/resources/application.properties và chỉnh sửa thông tin MySQL:Propertiesspring.datasource.url=jdbc:mysql://localhost:3306/kanza_store?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 spring.datasource.username=root
 spring.datasource.password=your_password
