@@ -3,6 +3,8 @@ import { ProductCardSale } from "../ProductCart/ProductCardBasic";
 import { useFetch } from "../../hooks/useFetch";
 import SaleHeader from "./SaleHeader";
 
+// Luôn sắp xếp trên BẢN SAO ([...list]) vì sort() sửa trực tiếp mảng gốc,
+// mà props / state trong React không được sửa trực tiếp.
 const sortProducts = (list, sortBy) => {
   const copy = [...list];
   if (sortBy === "price-asc") return copy.sort((a, b) => a.price - b.price);
@@ -27,11 +29,11 @@ export default function Sale({
   const { data: saleproducts, loading, error } = useFetch("/api/products/sale");
 
   if (loading) {
-    return <div className="px-8 py-9">Đang tải sản phẩm...</div>;
+    return <div className="px-8 py-9">Loading products...</div>;
   }
   if (error) {
     return (
-      <div className="px-8 py-9 text-red-500">Lỗi tải dữ liệu: {error}</div>
+      <div className="px-8 py-9 text-red-500">Failed to load data: {error}</div>
     );
   }
 
@@ -48,7 +50,7 @@ export default function Sale({
 
       {sortedProducts.length === 0 && (
         <p className="py-12 text-center text-gray-500">
-          Hiện chưa có sản phẩm giảm giá.
+          There are no sale products right now.
         </p>
       )}
 

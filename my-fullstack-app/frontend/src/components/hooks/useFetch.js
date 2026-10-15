@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 export function useFetch(url) {
+  // Khởi tạo state cho dữ liệu, trạng thái loading và lỗi
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(Boolean(url));
   const [error, setError] = useState(null);

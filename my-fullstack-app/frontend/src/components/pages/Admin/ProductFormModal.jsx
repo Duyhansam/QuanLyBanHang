@@ -1,5 +1,9 @@
-import { useState } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Trash2, Upload, X } from "lucide-react";
+import toast from "react-hot-toast";
+import { useAuth } from "../../hooks/useAuth";
+import { uploadImage } from "../../hooks/userApi";
+import { SHOE_SIZES } from "../../constants/sizes";
 
 export const CATEGORIES = ["MEN", "WOMEN", "KID", "SHOP", "BESTSELLER", "SALE"];
 export const TYPES = [
@@ -31,6 +35,7 @@ function toForm(product) {
       type: "",
       color: "",
       brandId: "",
+      stocks: {}, // { "36": "5", ... } (chuỗi để ô nhập có thể để trống)
       variants: [emptyVariant()],
     };
   }
@@ -44,6 +49,7 @@ function toForm(product) {
     type: product.type ?? "",
     color: product.color ?? "",
     brandId: product.brand?.id ?? "",
+    stocks: {}, // được điền sau khi tải tồn kho từ backend
     variants: product.variants?.length
       ? product.variants.map((v) => ({
           id: v.id,
@@ -69,6 +75,39 @@ export default function ProductFormModal({
 }) {
   const [form, setForm] = useState(() => toForm(product));
   const isEdit = Boolean(product);
+  const { user } = useAuth();
+  const [uploadingIndex, setUploadingIndex] = useState(null);
+
+  // Sửa sản phẩm: phải tải xong tồn kho hiện tại rồi mới cho lưu (tránh vô tình xóa tồn kho)
+  const [stockLoaded, setStockLoaded] = useState(!product);
+
+  useEffect(() => {
+    if (!product) return;
+    let cancelled = false;
+    fetch(`/api/products/${product.id}/stock`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error())))
+      .then((data) => {
+        if (cancelled) return;
+        const stocks = {};
+        if (data?.tracked) {
+          for (const [size, qty] of Object.entries(data.sizes)) {
+            stocks[size] = String(qty);
+          }
+        }
+        setForm((f) => ({ ...f, stocks }));
+        setStockLoaded(true);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          toast.error(
+            "Could not load the current stock. Please close and reopen this form!",
+          );
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [product]);
 
   const set = (field, value) => setForm((f) => ({ ...f, [field]: value }));
 
@@ -89,6 +128,40 @@ export default function ProductFormModal({
       variants: f.variants.filter((_, i) => i !== index),
     }));
 
+  const setStock = (size, value) =>
+    setForm((f) => ({ ...f, stocks: { ...f.stocks, [size]: value } }));
+
+  // Chọn ảnh từ máy -> upload lên backend -> điền đường dẫn trả về vào ô ảnh
+  const handleUpload = async (index, file) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image is too large (max 5MB)!");
+      return;
+    }
+    setUploadingIndex(index);
+    try {
+      const url = await uploadImage(file, user?.token);
+      setForm((f) => ({
+        ...f,
+        variants: f.variants.map((v, i) =>
+          i === index
+            ? {
+                ...v,
+                image: url,
+                // ảnh nhỏ đang trùng ảnh cũ thì xóa đi để backend dùng ảnh mới
+                thumbnail: v.thumbnail === v.image ? "" : v.thumbnail,
+              }
+            : v,
+        ),
+      }));
+      toast.success("Image uploaded!");
+    } catch (err) {
+      toast.error(err.message || "Image upload failed!");
+    } finally {
+      setUploadingIndex(null);
+    }
+  };
+
   const handleSubmit = () => {
     onSave({
       name: form.name,
@@ -101,6 +174,15 @@ export default function ProductFormModal({
       type: form.type,
       color: form.color,
       brandId: form.brandId === "" ? null : Number(form.brandId),
+      // Chỉ gửi các size có nhập số. Không nhập size nào = không quản lý tồn kho.
+      sizeStocks: Object.fromEntries(
+        Object.entries(form.stocks)
+          .filter(([, qty]) => qty !== "" && qty != null)
+          .map(([size, qty]) => [
+            size,
+            Math.max(0, Math.floor(Number(qty)) || 0),
+          ]),
+      ),
       variants: form.variants.map((v) => ({
         id: v.id,
         colorName: v.colorName,
@@ -115,7 +197,7 @@ export default function ProductFormModal({
       <div className="my-8 w-full max-w-3xl rounded-xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <h2 className="text-lg font-bold uppercase">
-            {isEdit ? `Sửa sản phẩm #${product.id}` : "Thêm sản phẩm mới"}
+            {isEdit ? `Edit product #${product.id}` : "Add new product"}
           </h2>
           <button
             onClick={onClose}
@@ -127,7 +209,7 @@ export default function ProductFormModal({
 
         <div className="space-y-5 px-6 py-5">
           <div>
-            <label className={labelCls}>Tên sản phẩm *</label>
+            <label className={labelCls}>Product name *</label>
             <input
               className={inputCls}
               value={form.name}
@@ -138,7 +220,7 @@ export default function ProductFormModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>Giá bán ($) *</label>
+              <label className={labelCls}>Price ($) *</label>
               <input
                 type="number"
                 min="0"
@@ -149,7 +231,9 @@ export default function ProductFormModal({
               />
             </div>
             <div>
-              <label className={labelCls}>Giá gốc ($) - chỉ khi giảm giá</label>
+              <label className={labelCls}>
+                Original price ($) - only if on sale
+              </label>
               <input
                 type="number"
                 min="0"
@@ -169,7 +253,7 @@ export default function ProductFormModal({
                 value={form.category}
                 onChange={(e) => set("category", e.target.value)}
               >
-                <option value="">(Không)</option>
+                <option value="">(None)</option>
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c}>
                     {c}
@@ -178,13 +262,13 @@ export default function ProductFormModal({
               </select>
             </div>
             <div>
-              <label className={labelCls}>Loại giày (type)</label>
+              <label className={labelCls}>Shoe type</label>
               <select
                 className={inputCls}
                 value={form.type}
                 onChange={(e) => set("type", e.target.value)}
               >
-                <option value="">(Không)</option>
+                <option value="">(None)</option>
                 {TYPES.map((t) => (
                   <option key={t} value={t}>
                     {t}
@@ -193,13 +277,13 @@ export default function ProductFormModal({
               </select>
             </div>
             <div>
-              <label className={labelCls}>Thương hiệu</label>
+              <label className={labelCls}>Brand</label>
               <select
                 className={inputCls}
                 value={form.brandId}
                 onChange={(e) => set("brandId", e.target.value)}
               >
-                <option value="">(Không)</option>
+                <option value="">(None)</option>
                 {brands.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.name}
@@ -211,7 +295,7 @@ export default function ProductFormModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>Nhãn (badge)</label>
+              <label className={labelCls}>Badge</label>
               <input
                 className={inputCls}
                 value={form.badge}
@@ -220,7 +304,7 @@ export default function ProductFormModal({
               />
             </div>
             <div>
-              <label className={labelCls}>Màu chính (tùy chọn)</label>
+              <label className={labelCls}>Main color (optional)</label>
               <input
                 className={inputCls}
                 value={form.color}
@@ -230,7 +314,7 @@ export default function ProductFormModal({
           </div>
 
           <div>
-            <label className={labelCls}>Mô tả</label>
+            <label className={labelCls}>Description</label>
             <textarea
               rows={3}
               className={inputCls}
@@ -240,22 +324,48 @@ export default function ProductFormModal({
           </div>
 
           <div>
+            <label className={labelCls}>Stock by size</label>
+            <p className="mb-3 text-xs text-gray-500">
+              Enter the quantity in stock for each size. Leave every field empty
+              to turn off stock tracking (unlimited sales). Once any size is
+              filled in, the empty sizes count as sold out.
+            </p>
+            <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
+              {SHOE_SIZES.map((size) => (
+                <div key={size}>
+                  <span className="mb-1 block text-center text-[11px] font-bold text-gray-600">
+                    {size}
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    className={inputCls + " px-1 text-center"}
+                    value={form.stocks[size] ?? ""}
+                    onChange={(e) => setStock(size, e.target.value)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className={labelCls + " mb-0"}>Các màu và ảnh *</label>
+              <label className={labelCls + " mb-0"}>Colors and images *</label>
               <button
                 type="button"
                 onClick={addVariant}
                 className="flex cursor-pointer items-center gap-1 text-xs font-bold uppercase hover:underline"
               >
-                <Plus className="h-3.5 w-3.5" /> Thêm màu
+                <Plus className="h-3.5 w-3.5" /> Add color
               </button>
             </div>
             <p className="mb-3 text-xs text-gray-500">
-              Ảnh nhập đường dẫn như{" "}
+              Enter an image path such as{" "}
               <code className="rounded bg-gray-100 px-1">
                 /images/products/categoryimg/boots/v1-black.png
               </code>
-              . Hãy chép file ảnh vào thư mục static của backend trước.
+              . Or click the upload icon on each row to pick an image from your
+              computer (PNG, JPG, WEBP, GIF, max 5MB).
             </p>
 
             <div className="space-y-3">
@@ -274,13 +384,13 @@ export default function ProductFormModal({
                         onLoad={(e) => (e.currentTarget.style.opacity = 1)}
                       />
                     ) : (
-                      <span className="text-[10px] text-gray-400">Ảnh</span>
+                      <span className="text-[10px] text-gray-400">Image</span>
                     )}
                   </div>
                   <div className="grid flex-1 grid-cols-1 gap-2 sm:grid-cols-3">
                     <input
                       className={inputCls}
-                      placeholder="Tên màu (Black)"
+                      placeholder="Color name (Black)"
                       value={v.colorName}
                       onChange={(e) =>
                         setVariant(i, "colorName", e.target.value)
@@ -288,24 +398,44 @@ export default function ProductFormModal({
                     />
                     <input
                       className={inputCls}
-                      placeholder="Đường dẫn ảnh *"
+                      placeholder="Image path *"
                       value={v.image}
                       onChange={(e) => setVariant(i, "image", e.target.value)}
                     />
                     <input
                       className={inputCls}
-                      placeholder="Ảnh nhỏ (trống = dùng ảnh chính)"
+                      placeholder="Thumbnail (empty = use the main image)"
                       value={v.thumbnail}
                       onChange={(e) =>
                         setVariant(i, "thumbnail", e.target.value)
                       }
                     />
                   </div>
+                  <label
+                    title="Upload an image from your computer"
+                    className="cursor-pointer p-2 text-gray-500 hover:text-black"
+                  >
+                    {uploadingIndex === i ? (
+                      <span className="text-[10px]">...</span>
+                    ) : (
+                      <Upload className="h-4 w-4" />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      className="hidden"
+                      disabled={uploadingIndex !== null}
+                      onChange={(e) => {
+                        handleUpload(i, e.target.files?.[0]);
+                        e.target.value = ""; // cho phép chọn lại đúng file đó
+                      }}
+                    />
+                  </label>
                   <button
                     type="button"
                     onClick={() => removeVariant(i)}
                     disabled={form.variants.length === 1}
-                    title="Xóa màu này"
+                    title="Remove this color"
                     className="cursor-pointer p-2 text-gray-500 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -321,14 +451,14 @@ export default function ProductFormModal({
             onClick={onClose}
             className="cursor-pointer rounded border border-gray-300 px-5 py-2 text-xs font-bold uppercase hover:bg-gray-50"
           >
-            Hủy
+            Cancel
           </button>
           <button
             onClick={handleSubmit}
-            disabled={saving}
+            disabled={saving || !stockLoaded}
             className="cursor-pointer rounded bg-black px-6 py-2 text-xs font-bold uppercase text-white hover:bg-neutral-800 disabled:opacity-50"
           >
-            {saving ? "Đang lưu..." : isEdit ? "Lưu thay đổi" : "Thêm sản phẩm"}
+            {saving ? "Saving..." : isEdit ? "Save changes" : "Add product"}
           </button>
         </div>
       </div>

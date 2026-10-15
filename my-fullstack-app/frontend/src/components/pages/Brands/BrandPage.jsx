@@ -4,6 +4,8 @@ import { ChevronDown } from "lucide-react";
 import { ProductCardMen } from "../ProductCart/ProductCardGender";
 import { useFetch } from "../../hooks/useFetch";
 
+// Luôn sắp xếp trên BẢN SAO ([...list]) vì sort() sửa trực tiếp mảng gốc,
+// mà props / state trong React không được sửa trực tiếp.
 const sortProducts = (list, sortBy) => {
   const copy = [...list];
   if (sortBy === "price-asc") return copy.sort((a, b) => a.price - b.price);
@@ -37,18 +39,18 @@ export default function BrandPage({
   }, [slug]);
 
   if (loading || brandLoading) {
-    return <div className="px-8 py-9">Đang tải sản phẩm...</div>;
+    return <div className="px-8 py-9">Loading products...</div>;
   }
 
   if (brandError || error) {
     return (
       <div className="px-8 py-9 text-center">
-        <p className="text-gray-600 mb-4">Không tìm thấy thương hiệu này.</p>
+        <p className="text-gray-600 mb-4">Brand not found.</p>
         <Link
           to="/brands"
           className="text-xs font-bold uppercase tracking-wider underline"
         >
-          ← Quay lại danh sách thương hiệu
+          ← Back to all brands
         </Link>
       </div>
     );
@@ -114,7 +116,7 @@ export default function BrandPage({
 
       {products.length === 0 && (
         <p className="py-12 text-center text-gray-500">
-          Thương hiệu này chưa có sản phẩm nào.
+          This brand has no products yet.
         </p>
       )}
 

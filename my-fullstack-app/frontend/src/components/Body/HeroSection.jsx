@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useFetch } from "../hooks/useFetch";
 
 function HeroSection() {
+  // Lấy danh sách hero slides từ API
   const { data: heroSlides } = useFetch("/api/home/hero-slides");
   const [currentIndex, setCurrentIndex] = useState(0);
 

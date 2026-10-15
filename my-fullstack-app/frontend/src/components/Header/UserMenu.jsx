@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, LogOut, LayoutDashboard } from "lucide-react";
+import { User, LogOut, LayoutDashboard, Package } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
 
@@ -76,6 +76,20 @@ export default function UserMenu() {
               <LayoutDashboard className="w-4 h-4" /> Admin
             </Link>
           )}
+          <Link
+            to="/profile"
+            onClick={() => setOpen(false)}
+            className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 hover:text-black transition-colors border-b border-gray-100"
+          >
+            <User className="w-4 h-4" /> My profile
+          </Link>
+          <Link
+            to="/orders"
+            onClick={() => setOpen(false)}
+            className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 hover:text-black transition-colors border-b border-gray-100"
+          >
+            <Package className="w-4 h-4" /> My orders
+          </Link>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 hover:text-black transition-colors cursor-pointer"

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function FooterBottom() {
   return (
     <div className="border-t-2 border-neutral-800 mt-4 pt-4 justify-between items-center flex-col md:flex-row flex gap-4 ">
@@ -7,13 +9,19 @@ export default function FooterBottom() {
         </span>
       </div>
       <div>
-        <a href="#" className="text-sm text-neutral-400 hover:text-white">
+        <Link
+          to="/info/terms"
+          className="text-sm text-neutral-400 hover:text-white"
+        >
           Terms & Conditions
-        </a>
+        </Link>
         <span className="text-sm text-neutral-400 mx-2">|</span>
-        <a href="#" className="text-sm text-neutral-400 hover:text-white">
+        <Link
+          to="/info/privacy"
+          className="text-sm text-neutral-400 hover:text-white"
+        >
           Privacy Policy
-        </a>
+        </Link>
       </div>
     </div>
   );

@@ -11,10 +11,10 @@ export default function ProductDetailWrapper({
   const { data: product, loading, error } = useFetch(`/api/products/${id}`);
 
   if (loading) {
-    return <div className="p-12 text-center">Đang tải sản phẩm...</div>;
+    return <div className="p-12 text-center">Loading products...</div>;
   }
   if (error || !product) {
-    return <div className="p-12 text-center">Không tìm thấy sản phẩm!</div>;
+    return <div className="p-12 text-center">Product not found!</div>;
   }
 
   const isInitiallyLiked = wishlist.some((item) => item.id === product.id);

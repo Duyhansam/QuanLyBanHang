@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
-
+// Hàm chuyển tên danh mục thành slug (ví dụ: "Men's Shoes" -> "mens-shoes")
 const toSlug = (name) => name.trim().toLowerCase().replace(/\s+/g, "-");
 
 export default function CategoryCard() {
+  // Lấy danh sách danh mục từ API
   const { data: categories } = useFetch("/api/home/categories");
 
   return (

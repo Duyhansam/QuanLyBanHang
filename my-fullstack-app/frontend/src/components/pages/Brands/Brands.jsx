@@ -6,11 +6,11 @@ export default function Brands() {
   const { data: brands, loading, error } = useFetch("/api/brands");
 
   if (loading) {
-    return <div className="px-8 py-9">Đang tải thương hiệu...</div>;
+    return <div className="px-8 py-9">Loading brands...</div>;
   }
   if (error) {
     return (
-      <div className="px-8 py-9 text-red-500">Lỗi tải dữ liệu: {error}</div>
+      <div className="px-8 py-9 text-red-500">Failed to load data: {error}</div>
     );
   }
 

@@ -8,12 +8,14 @@ export default function BestSeller({
   onToggleWishlist,
   onAddToCart,
 }) {
+  // Lấy danh sách sản phẩm bán chạy từ API
   const {
     data: bestSellers,
     loading,
     error,
   } = useFetch("/api/products?category=BESTSELLER");
 
+  // Hàm lấy hình ảnh sản phẩm (nếu có biến thể, lấy hình ảnh của biến thể đầu tiên)
   const getImage = (product) => product.variants?.[0]?.image ?? "";
 
   return (
@@ -22,14 +24,16 @@ export default function BestSeller({
         <h3 className="text-xs font-bold tracking-wider text-black">
           BEST SELLERS
         </h3>
-        <span className="text-xs text-black font-bold cursor-pointer hover:underline">
-          View all
-        </span>
+        <Link to="/shop">
+          <span className="text-xs text-black font-bold cursor-pointer hover:underline">
+            View all
+          </span>
+        </Link>
       </div>
 
-      {loading && <p className="text-sm text-gray-500">Đang tải sản phẩm...</p>}
+      {loading && <p className="text-sm text-gray-500">Loading products...</p>}
       {error && (
-        <p className="text-sm text-red-500">Lỗi tải dữ liệu: {error}</p>
+        <p className="text-sm text-red-500">Failed to load data: {error}</p>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -58,7 +62,7 @@ export default function BestSeller({
                     }
                   }}
                   className="absolute z-10 top-2 right-2 p-2 bg-white rounded-full shadow-sm transition cursor-pointer"
-                  title="Yêu thích"
+                  title="Wishlist"
                 >
                   <Heart
                     className={`w-4 h-4 transition-colors ${
@@ -108,7 +112,7 @@ export default function BestSeller({
                       toast.success("Product added to cart!");
                     }}
                     className="p-2 bg-black text-white rounded-full hover:bg-neutral-800 transition cursor-pointer shadow-sm"
-                    title="Thêm vào giỏ hàng"
+                    title="Add to cart"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
                   </button>

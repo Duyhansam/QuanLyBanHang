@@ -1,12 +1,24 @@
 import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { pickAvailableSize } from "../../hooks/pickAvailableSize";
 
 export default function WishlistPage({
   wishlist,
   handleAddToWishlist,
   onAddToCart,
 }) {
+  // Thêm nhanh vào giỏ: tự chọn size còn hàng
+  const handleQuickAdd = async (product) => {
+    const size = await pickAvailableSize(product);
+    if (!size) {
+      toast.error("This product is sold out.");
+      return;
+    }
+    onAddToCart({ ...product, selectedSize: size, quantity: 1 });
+    toast.success("Product added to cart!");
+  };
+
   if (!wishlist || wishlist.length === 0) {
     return (
       <div className="max-w-md mx-auto px-6 py-20 text-center">
@@ -61,12 +73,12 @@ export default function WishlistPage({
               <button
                 onClick={() => {
                   handleAddToWishlist(product, false);
-                  toast("Product removed from wishlist.!", {
+                  toast("Product removed from wishlist!", {
                     icon: "💔",
                   });
                 }}
                 className="absolute top-3 right-3 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-red-600 hover:bg-white transition-colors shadow-sm cursor-pointer"
-                title="Xóa khỏi yêu thích"
+                title="Remove from wishlist"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -90,14 +102,7 @@ export default function WishlistPage({
 
               {/* Nút thêm nhanh vào giỏ hàng */}
               <button
-                onClick={() => {
-                  onAddToCart({
-                    ...product,
-                    selectedSize: product.sizes ? product.sizes[0] : "M",
-                    quantity: 1,
-                  });
-                  toast.success("Product added to cart!");
-                }}
+                onClick={() => handleQuickAdd(product)}
                 className="w-full bg-black text-white text-[11px] font-bold uppercase tracking-wider py-3 rounded hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
               >
                 <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart

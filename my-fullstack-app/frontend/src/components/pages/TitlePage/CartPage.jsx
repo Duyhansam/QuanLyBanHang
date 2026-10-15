@@ -8,7 +8,7 @@ export default function CartPage({ cart, onRemove, onIncrease, onDecrease }) {
     (total, item) => total + item.price * item.quantity,
     0,
   );
-  const shippingFee = subtotal > 500 ? 0 : 15; // Phí vận chuyển miễn phí nếu tổng tiền tạm tính > 500, ngược lại là 15
+  const shippingFee = subtotal > 500 ? 0 : 15; // Shipping fee miễn phí nếu tổng tiền tạm tính > 500, ngược lại là 15
   const total = subtotal + (subtotal > 0 ? shippingFee : 0);
 
   if (!cart || cart.length === 0) {
@@ -99,7 +99,7 @@ export default function CartPage({ cart, onRemove, onIncrease, onDecrease }) {
                     <button
                       onClick={() => {
                         onRemove?.(cartItemId);
-                        toast.error("Product removed from cart.!");
+                        toast.error("Product removed from cart!");
                       }}
                       className="text-xs text-red-500 hover:text-red-700 flex items-center gap-1 font-medium cursor-pointer ml-auto"
                     >

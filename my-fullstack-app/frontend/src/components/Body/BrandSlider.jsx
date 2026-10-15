@@ -2,6 +2,7 @@ import { useFetch } from "../hooks/useFetch";
 import { Link } from "react-router-dom";
 
 export default function BrandSlider() {
+  // Lấy danh sách thương hiệu từ API
   const { data: brands } = useFetch("/api/brands");
 
   return (

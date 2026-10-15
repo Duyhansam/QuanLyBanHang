@@ -1,9 +1,11 @@
 package com.kanza.store.auth;
 
 // Dữ liệu user an toàn để trả về React (không có passwordHash)
-public record UserDto(Long id, String fullName, String email, String role) {
+public record UserDto(Long id, String fullName, String email, String role, String phone, String address,
+        String city) {
 
     public static UserDto from(User u) {
-        return new UserDto(u.getId(), u.getFullName(), u.getEmail(), u.getRole());
+        return new UserDto(u.getId(), u.getFullName(), u.getEmail(), u.getRole(), u.getPhone(), u.getAddress(),
+                u.getCity());
     }
 }

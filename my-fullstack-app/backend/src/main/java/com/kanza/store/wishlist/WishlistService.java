@@ -31,10 +31,10 @@ public class WishlistService {
     @Transactional
     public List<WishlistItemDto> add(Long userId, WishlistRequest req) {
         if (req == null || req.productId() == null) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Thiếu mã sản phẩm!");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Product id is missing!");
         }
         Product product = productRepository.findById(req.productId())
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Sản phẩm không tồn tại!"));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Product does not exist!"));
         upsert(userId, product, req.variantId());
         return getWishlist(userId);
     }

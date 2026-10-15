@@ -17,14 +17,15 @@ async function adminFetch(path, token, options = {}) {
       Authorization: `Bearer ${token}`,
     },
   });
+  // 401 = chưa đăng nhập / token hết hạn; 403 = đã đăng nhập nhưng không phải ADMIN. Cả hai dùng chung một thông báo.
   if (res.status === 401 || res.status === 403) {
     throw new Error(
-      "Bạn không có quyền ADMIN (hãy đăng nhập lại bằng tài khoản admin).",
+      "You don't have ADMIN permission (please sign in again with an admin account).",
     );
   }
   const text = await res.text();
   const body = text ? JSON.parse(text) : null;
-  if (!res.ok) throw new Error(body?.message || `Lỗi ${res.status}`);
+  if (!res.ok) throw new Error(body?.message || `Error ${res.status}`);
   return body;
 }
 
@@ -49,7 +50,7 @@ export default function AdminPage() {
         return res.json();
       })
       .then((list) => setProducts([...list].sort((a, b) => b.id - a.id)))
-      .catch((err) => toast.error("Không tải được sản phẩm: " + err.message))
+      .catch((err) => toast.error("Could not load products: " + err.message))
       .finally(() => setLoading(false));
   }, []);
 
@@ -57,6 +58,8 @@ export default function AdminPage() {
     loadProducts();
   }, [loadProducts]);
 
+  // useMemo: chỉ lọc lại khi danh sách hoặc bộ lọc đổi, không lọc lại ở mỗi lần render (đỡ tốn khi danh sách dài).
+  // Tìm theo tên (không phân biệt hoa thường) hoặc đúng id.
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return products.filter((p) => {
@@ -76,13 +79,13 @@ export default function AdminPage() {
     return (
       <div className="px-8 py-24 text-center">
         <h1 className="text-2xl font-bold">
-          Bạn không có quyền truy cập trang này
+          You don't have access to this page
         </h1>
         <p className="mt-2 text-gray-600">
-          Trang quản trị chỉ dành cho tài khoản ADMIN.
+          The admin area is only available to ADMIN accounts.
         </p>
         <Link to="/" className="mt-6 inline-block text-sm font-bold underline">
-          Về trang chủ
+          Back to home
         </Link>
       </div>
     );
@@ -100,7 +103,7 @@ export default function AdminPage() {
         user.token,
         { method: isEdit ? "PUT" : "POST", body: JSON.stringify(payload) },
       );
-      toast.success(isEdit ? "Đã lưu thay đổi." : "Đã thêm sản phẩm.");
+      toast.success(isEdit ? "Changes saved." : "Product added.");
       setEditing(undefined);
       loadProducts();
     } catch (err) {
@@ -113,7 +116,7 @@ export default function AdminPage() {
   const handleDelete = async (product) => {
     if (
       !window.confirm(
-        `Xóa "${product.name}" (#${product.id})?\nSản phẩm cũng sẽ bị gỡ khỏi giỏ hàng và wishlist của mọi người.`,
+        `Delete "${product.name}" (#${product.id})?\nThe product will also be removed from everyone's cart and wishlist.`,
       )
     ) {
       return;
@@ -122,7 +125,7 @@ export default function AdminPage() {
       await adminFetch(`/api/products/${product.id}`, user.token, {
         method: "DELETE",
       });
-      toast.success("Đã xóa sản phẩm.");
+      toast.success("Product deleted.");
       loadProducts();
     } catch (err) {
       toast.error(err.message);
@@ -137,18 +140,26 @@ export default function AdminPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold uppercase md:text-3xl">
-            Quản trị sản phẩm
+            Product management
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            {products.length} sản phẩm trong cửa hàng
+            {products.length} products in the store
           </p>
         </div>
-        <button
-          onClick={() => setEditing(null)}
-          className="flex cursor-pointer items-center gap-2 rounded bg-black px-5 py-3 text-xs font-bold uppercase text-white hover:bg-neutral-800"
-        >
-          <Plus className="h-4 w-4" /> Thêm sản phẩm
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to="/admin/orders"
+            className="rounded border border-gray-300 px-5 py-3 text-xs font-bold uppercase hover:border-black"
+          >
+            Order management
+          </Link>
+          <button
+            onClick={() => setEditing(null)}
+            className="flex cursor-pointer items-center gap-2 rounded bg-black px-5 py-3 text-xs font-bold uppercase text-white hover:bg-neutral-800"
+          >
+            <Plus className="h-4 w-4" /> Add product
+          </button>
+        </div>
       </div>
 
       <div className="my-6 flex flex-wrap items-center gap-3">
@@ -157,7 +168,7 @@ export default function AdminPage() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Tìm theo tên hoặc id"
+            placeholder="Search by name or id"
             className="w-64 rounded border border-gray-300 py-2 pl-9 pr-3 text-sm outline-none focus:border-black"
           />
         </div>
@@ -166,7 +177,7 @@ export default function AdminPage() {
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
         >
-          <option value="">Mọi loại giày</option>
+          <option value="">All shoe types</option>
           {TYPES.map((t) => (
             <option key={t} value={t}>
               {t}
@@ -178,29 +189,29 @@ export default function AdminPage() {
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
         >
-          <option value="">Mọi category</option>
+          <option value="">All categories</option>
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
           ))}
         </select>
-        <span className="text-xs text-gray-500">{filtered.length} kết quả</span>
+        <span className="text-xs text-gray-500">{filtered.length} results</span>
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="w-full min-w-[800px] text-left text-sm">
           <thead className="bg-gray-50 text-[11px] uppercase tracking-wider text-gray-600">
             <tr>
-              <th className="px-4 py-3">Ảnh</th>
+              <th className="px-4 py-3">Image</th>
               <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Tên</th>
-              <th className="px-4 py-3">Giá</th>
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Price</th>
               <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Loại</th>
-              <th className="px-4 py-3">Hãng</th>
-              <th className="px-4 py-3">Màu</th>
-              <th className="px-4 py-3 text-right">Thao tác</th>
+              <th className="px-4 py-3">Type</th>
+              <th className="px-4 py-3">Brand</th>
+              <th className="px-4 py-3">Color</th>
+              <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -210,7 +221,7 @@ export default function AdminPage() {
                   colSpan={9}
                   className="px-4 py-10 text-center text-gray-500"
                 >
-                  Đang tải...
+                  Loading...
                 </td>
               </tr>
             )}
@@ -220,7 +231,7 @@ export default function AdminPage() {
                   colSpan={9}
                   className="px-4 py-10 text-center text-gray-500"
                 >
-                  Không có sản phẩm nào.
+                  No products found.
                 </td>
               </tr>
             )}
@@ -258,14 +269,14 @@ export default function AdminPage() {
                   <div className="flex justify-end gap-1">
                     <button
                       onClick={() => setEditing(p)}
-                      title="Sửa"
+                      title="Edit"
                       className="cursor-pointer rounded p-2 hover:bg-gray-200"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(p)}
-                      title="Xóa"
+                      title="Delete"
                       className="cursor-pointer rounded p-2 text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -285,17 +296,17 @@ export default function AdminPage() {
             disabled={page === 1}
             className="cursor-pointer rounded border border-gray-300 px-4 py-2 text-xs font-bold uppercase disabled:opacity-40"
           >
-            Trước
+            Previous
           </button>
           <span>
-            Trang {page} / {pageCount}
+            Page {page} / {pageCount}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
             disabled={page === pageCount}
             className="cursor-pointer rounded border border-gray-300 px-4 py-2 text-xs font-bold uppercase disabled:opacity-40"
           >
-            Sau
+            Next
           </button>
         </div>
       )}

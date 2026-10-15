@@ -15,6 +15,8 @@ const DESCRIPTIONS = {
   sandals: "Breathable for sunny days.",
 };
 
+// Luôn sắp xếp trên BẢN SAO ([...list]) vì sort() sửa trực tiếp mảng gốc,
+// mà props / state trong React không được sửa trực tiếp.
 const sortProducts = (list, sortBy) => {
   const copy = [...list];
   if (sortBy === "price-asc") return copy.sort((a, b) => a.price - b.price);
@@ -48,11 +50,11 @@ export default function CategoryPage({
   }, [slug]);
 
   if (loading) {
-    return <div className="px-8 py-9">Đang tải sản phẩm...</div>;
+    return <div className="px-8 py-9">Loading products...</div>;
   }
   if (error) {
     return (
-      <div className="px-8 py-9 text-red-500">Lỗi tải dữ liệu: {error}</div>
+      <div className="px-8 py-9 text-red-500">Failed to load data: {error}</div>
     );
   }
 
@@ -103,7 +105,7 @@ export default function CategoryPage({
 
       {products.length === 0 && (
         <p className="py-12 text-center text-gray-500">
-          Chưa có sản phẩm nào trong mục này.
+          No products in this category yet.
         </p>
       )}
 

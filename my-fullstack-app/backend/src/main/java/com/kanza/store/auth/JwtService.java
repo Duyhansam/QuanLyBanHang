@@ -28,10 +28,13 @@ public class JwtService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .subject(String.valueOf(user.getId())) // sub = id user
                 .claim("email", user.getEmail())
+                // role (USER / ADMIN) được SecurityConfig đọc lại để phân quyền cho từng API.
                 .claim("role", user.getRole())
                 .issuedAt(now)
                 .expiresAt(now.plus(expirationMinutes, ChronoUnit.MINUTES))
                 .build();
+        // HS256 = ký token bằng khóa bí mật (app.jwt.secret). Khi nhận request, backend dùng chính khóa này để kiểm tra chữ ký
+        // nên không cần lưu token trong DB. Token hết hạn sau expirationMinutes phút.
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
     }

@@ -6,6 +6,9 @@ const AuthContext = createContext(null);
 // backend vẫn là nơi kiểm tra thật)
 function isTokenExpired(token) {
   try {
+    // JWT gồm 3 phần ngăn bằng dấu chấm: header.payload.signature. Payload là JSON mã hóa base64url
+    // (dùng - và _ thay cho + và /) nên phải đổi về base64 thường thì atob() mới giải mã được.
+    // exp là thời điểm hết hạn tính bằng GIÂY, nhân 1000 để so với Date.now() (mili giây).
     const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
     const payload = JSON.parse(atob(base64));
     return payload.exp ? payload.exp * 1000 < Date.now() : false;
@@ -28,6 +31,7 @@ function loadUser() {
 }
 
 export function AuthProvider({ children }) {
+  // Truyền loadUser (không có dấu ngoặc) để React chỉ đọc localStorage MỘT lần lúc khởi tạo (lazy initial state)
   const [user, setUser] = useState(loadUser);
 
   // Gọi sau khi đăng nhập / đăng ký thành công
@@ -41,9 +45,17 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  // Cập nhật một phần thông tin user đang đăng nhập (ví dụ đổi họ tên ở trang hồ sơ)
+  const updateUser = (patch) => {
+    if (!user) return;
+    const next = { ...user, ...patch };
+    localStorage.setItem("user", JSON.stringify(next));
+    setUser(next);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, isLoggedIn: Boolean(user), login, logout }}
+      value={{ user, isLoggedIn: Boolean(user), login, logout, updateUser }}
     >
       {children}
     </AuthContext.Provider>

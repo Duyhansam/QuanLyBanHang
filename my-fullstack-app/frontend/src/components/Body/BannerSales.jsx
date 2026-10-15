@@ -4,7 +4,7 @@ import { useFetch } from "../hooks/useFetch";
 export default function BannerSales() {
   const { data: banner, error } = useFetch("/api/home/banner");
 
-  // Chưa tải xong (data còn là []) hoặc backend không có banner nào đang bật
+  // Nếu không có banner hoặc có lỗi, không hiển thị gì
   if (error || !banner || Array.isArray(banner)) return null;
 
   return (

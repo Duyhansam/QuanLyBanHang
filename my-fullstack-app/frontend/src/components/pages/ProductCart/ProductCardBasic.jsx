@@ -4,7 +4,12 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useCompare } from "../../hooks/useCompare";
 import { DEFAULT_SIZE } from "../../constants/sizes";
+import { useSoldOutIds } from "../../hooks/useSoldOutIds";
 
+// Component gốc dùng chung cho mọi loại thẻ sản phẩm.
+// - renderInfo: là một HÀM (render prop). Nếu truyền vào thì thẻ gọi hàm đó để vẽ phần thông tin bên dưới
+//   (ví dụ thẻ Sale hiện giá gốc + % giảm); không truyền thì dùng phần mặc định.
+// - showVariants: bật / tắt hàng chấm chọn màu.
 function BasicCardBase({
   product,
   onToggleWishlist,
@@ -18,6 +23,7 @@ function BasicCardBase({
   const [isWishlisted, setIsWishlisted] = useState(isInitiallyLiked || false);
   const { isInCompare, handleToggleCompare } = useCompare();
   const inCompare = isInCompare(product.id);
+  const soldOut = useSoldOutIds().has(product.id); // hết sạch hàng
 
   const handleCompareClick = () => {
     handleToggleCompare({
@@ -27,6 +33,7 @@ function BasicCardBase({
   };
   const to = `/product/${product.id}`;
 
+  // isInitiallyLiked có thể đổi sau khi danh sách wishlist tải xong từ server; effect này đồng bộ lại biểu tượng trái tim.
   useEffect(() => {
     setIsWishlisted(isInitiallyLiked || false);
   }, [isInitiallyLiked]);
@@ -44,14 +51,18 @@ function BasicCardBase({
 
     // Kiểm tra trạng thái để hiển thị toast phù hợp
     if (next) {
-      toast.success("Product added to wishlist.!");
+      toast.success("Product added to wishlist!");
     } else {
-      toast("Product removed from wishlist.!", { icon: "💔" });
+      toast("Product removed from wishlist!", { icon: "💔" });
     }
 
     onToggleWishlist?.(productToWishlist, next);
   };
   const handleAddToCartClick = () => {
+    if (soldOut) {
+      toast.error("This product is sold out.");
+      return;
+    }
     if (onAddToCart) {
       const activeImage = selectedVariant?.image || product.image;
       const selectedSize = DEFAULT_SIZE;
@@ -65,7 +76,7 @@ function BasicCardBase({
       };
 
       onAddToCart(itemToCart);
-      toast.success("Product added to cart.!");
+      toast.success("Product added to cart!");
     }
   };
 
@@ -76,6 +87,13 @@ function BasicCardBase({
           <span className="absolute top-3 right-3 bg-white text-black text-[9px] font-bold px-2.5 py-1 rounded border border-gray-200 uppercase tracking-wider z-10 shadow-sm">
             {product.badge}
           </span>
+        )}
+        {soldOut && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 pointer-events-none">
+            <span className="bg-black text-white text-[10px] font-bold px-3 py-1.5 uppercase tracking-widest">
+              Sold out
+            </span>
+          </div>
         )}
         <Link to={to}>
           <img
@@ -156,7 +174,9 @@ function BasicCardBase({
           </button>
           <button
             onClick={handleAddToCartClick}
-            className="p-1.5 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+            disabled={soldOut}
+            title={soldOut ? "Sold out" : undefined}
+            className="p-1.5 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <ShoppingCart className="w-4 h-4 text-gray-600 hover:text-black" />
           </button>

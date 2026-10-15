@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -18,7 +17,6 @@ import lombok.ToString;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class User {
 
     @Id
@@ -38,6 +36,15 @@ public class User {
 
     @Column(nullable = false)
     private String role = "USER"; // USER, ADMIN
+
+    // Hồ sơ giao hàng (không bắt buộc), dùng để điền sẵn khi thanh toán
+    @Column(length = 20)
+    private String phone;
+
+    private String address;
+
+    @Column(length = 100)
+    private String city;
 
     private LocalDateTime createdAt;
 

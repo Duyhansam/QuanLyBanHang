@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    // @EntityGraph(attributePaths = {...}): tải luôn `variants` và `brand` bằng JOIN trong cùng một câu SQL.
+    // Thiếu nó, các quan hệ LAZY chưa được nạp; khi trả JSON ra ngoài (đã hết phiên Hibernate) sẽ bị LazyInitializationException
+    // hoặc phát sinh N+1 truy vấn. Mọi phương thức bên dưới đều dùng cùng cách này.
     @Override
     @EntityGraph(attributePaths = {"variants", "brand"})
     List<Product> findAll();
@@ -16,6 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = {"variants", "brand"})
     Optional<Product> findById(Long id);
 
+    // Spring Data tự sinh SQL từ TÊN phương thức: Name + Containing + IgnoreCase => WHERE LOWER(name) LIKE %keyword%.
     @EntityGraph(attributePaths = {"variants", "brand"})
     List<Product> findByNameContainingIgnoreCase(String keyword);
 

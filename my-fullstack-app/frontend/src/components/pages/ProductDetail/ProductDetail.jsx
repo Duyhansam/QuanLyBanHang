@@ -3,7 +3,8 @@ import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import ProductOptions from "./ProductOptions";
 import ProductPolicy from "./ProductPolicy";
-import { DEFAULT_SIZE } from "../../constants/sizes";
+import ProductReviews from "./ProductReviews";
+import { DEFAULT_SIZE, SHOE_SIZES } from "../../constants/sizes";
 
 export default function ProductDetail({
   product,
@@ -12,7 +13,7 @@ export default function ProductDetail({
   isInitiallyLiked,
 }) {
   if (!product)
-    return <div className="p-8 text-center">Không tìm thấy sản phẩm.</div>;
+    return <div className="p-8 text-center">Product not found.</div>;
 
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.[0] || null,
@@ -22,6 +23,36 @@ export default function ProductDetail({
   );
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(isInitiallyLiked || false);
+
+  // Tồn kho theo size: { "36": 5, "37": 0 }. null = sản phẩm chưa quản lý tồn kho (bán không giới hạn)
+  const [stock, setStock] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setStock(null);
+    fetch(`/api/products/${product.id}/stock`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled) setStock(data?.tracked ? data.sizes : null);
+      })
+      .catch(() => {}); // lỗi mạng thì coi như không giới hạn, backend vẫn chặn khi đặt hàng
+    return () => {
+      cancelled = true;
+    };
+  }, [product.id]);
+
+  // Size đang chọn đã hết hàng thì nhảy sang size đầu tiên còn hàng; số lượng không vượt quá tồn kho
+  useEffect(() => {
+    if (!stock) return;
+    const sizes = product.sizes || SHOE_SIZES;
+    const left = stock[selectedSize] ?? 0;
+    if (left <= 0) {
+      const firstAvailable = sizes.find((s) => (stock[s] ?? 0) > 0);
+      if (firstAvailable) setSelectedSize(firstAvailable);
+    } else if (quantity > left) {
+      setQuantity(left);
+    }
+  }, [stock, selectedSize, quantity, product.sizes]);
 
   // Cập nhật lại trạng thái yêu thích mỗi khi sản phẩm hoặc prop ban đầu thay đổi
   useEffect(() => {
@@ -48,6 +79,7 @@ export default function ProductDetail({
             selectedVariant={selectedVariant}
             selectedSize={selectedSize}
             onSelectSize={setSelectedSize}
+            stock={stock}
             quantity={quantity}
             onQuantityChange={setQuantity}
             isWishlisted={isWishlisted}
@@ -71,6 +103,8 @@ export default function ProductDetail({
           <ProductPolicy />
         </div>
       </div>
+
+      <ProductReviews key={product.id} productId={product.id} />
     </div>
   );
 }

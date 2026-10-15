@@ -8,6 +8,7 @@ export default function ProductOptions({
   selectedVariant,
   selectedSize,
   onSelectSize,
+  stock, // { "36": 5, ... } hoặc null nếu không giới hạn
   quantity,
   onQuantityChange,
   isWishlisted,
@@ -15,6 +16,11 @@ export default function ProductOptions({
   onAddToCart,
 }) {
   const navigate = useNavigate();
+
+  const sizes = product.sizes || SHOE_SIZES;
+  const left = stock ? (stock[selectedSize] ?? 0) : null; // null = không giới hạn
+  const soldOut = left !== null && left <= 0;
+  const maxQty = left !== null ? Math.max(left, 1) : 99;
 
   // Tạo hàm gom nhóm dữ liệu sản phẩm đưa vào giỏ hàng
   const handleCreateCartItem = () => {
@@ -32,6 +38,10 @@ export default function ProductOptions({
   };
 
   const handleAddToCartClick = () => {
+    if (soldOut) {
+      toast.error("This size is sold out.");
+      return;
+    }
     if (onAddToCart) {
       const itemToCart = handleCreateCartItem();
       onAddToCart(itemToCart);
@@ -40,6 +50,10 @@ export default function ProductOptions({
   };
 
   const handleBuyNowClick = () => {
+    if (soldOut) {
+      toast.error("This size is sold out.");
+      return;
+    }
     const itemToBuyNow = handleCreateCartItem();
 
     navigate("/checkout", { state: { buyNowItem: itemToBuyNow } });
@@ -52,9 +66,9 @@ export default function ProductOptions({
 
       // 3. Thông báo linh hoạt theo trạng thái Thêm / Xóa Wishlist
       if (nextState) {
-        toast.success("Product added to wishlist.!");
+        toast.success("Product added to wishlist!");
       } else {
-        toast("Product removed from wishlist.!", { icon: "💔" });
+        toast("Product removed from wishlist!", { icon: "💔" });
       }
     }
   };
@@ -67,20 +81,44 @@ export default function ProductOptions({
           SIZE:
         </label>
         <div className="flex flex-wrap items-center gap-2">
-          {(product.sizes || SHOE_SIZES).map((size) => (
-            <button
-              key={size}
-              onClick={() => onSelectSize(size)}
-              className={`w-12 h-10 border text-xs font-bold transition-all cursor-pointer rounded ${
-                selectedSize === size
-                  ? "border-black bg-black text-white"
-                  : "border-gray-300 bg-white text-black hover:border-black"
-              }`}
-            >
-              {size}
-            </button>
-          ))}
+          {sizes.map((size) => {
+            const unavailable = stock && (stock[size] ?? 0) <= 0;
+            return (
+              <button
+                key={size}
+                onClick={() => onSelectSize(size)}
+                disabled={unavailable}
+                title={unavailable ? "Sold out" : undefined}
+                className={`w-12 h-10 border text-xs font-bold transition-all rounded ${
+                  selectedSize === size
+                    ? "border-black bg-black text-white cursor-pointer"
+                    : unavailable
+                      ? "border-gray-200 bg-gray-50 text-gray-300 line-through cursor-not-allowed"
+                      : "border-gray-300 bg-white text-black hover:border-black cursor-pointer"
+                }`}
+              >
+                {size}
+              </button>
+            );
+          })}
         </div>
+        {left !== null && (
+          <p
+            className={`mt-2 text-xs font-semibold ${
+              soldOut
+                ? "text-red-600"
+                : left <= 5
+                  ? "text-amber-600"
+                  : "text-gray-500"
+            }`}
+          >
+            {soldOut
+              ? "Out of stock"
+              : left <= 5
+                ? `Only ${left} left`
+                : `${left} in stock`}
+          </p>
+        )}
       </div>
 
       {/* Chọn số lượng, Nút Giỏ hàng, Mua ngay & Wishlist */}
@@ -98,7 +136,7 @@ export default function ProductOptions({
               {quantity}
             </span>
             <button
-              onClick={() => onQuantityChange(quantity + 1)}
+              onClick={() => onQuantityChange(Math.min(maxQty, quantity + 1))}
               className="px-3 py-3 text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer font-bold"
             >
               +
@@ -109,7 +147,7 @@ export default function ProductOptions({
           <button
             onClick={handleWishlistClick}
             className="p-4 border border-gray-300 rounded hover:border-black transition-colors cursor-pointer"
-            title="Thêm vào yêu thích"
+            title="Add to wishlist"
           >
             <Heart
               className={`w-5 h-5 transition-colors ${
@@ -124,7 +162,8 @@ export default function ProductOptions({
           {/* Nút Thêm vào giỏ hàng */}
           <button
             onClick={handleAddToCartClick}
-            className="border border-black text-black text-xs font-bold uppercase tracking-wider py-4 px-4 rounded hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            disabled={soldOut}
+            className="border border-black text-black text-xs font-bold uppercase tracking-wider py-4 px-4 rounded hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ShoppingCart className="w-4 h-4" />
             Add to cart
@@ -133,10 +172,11 @@ export default function ProductOptions({
           {/* Nút Mua ngay (Buy Now) */}
           <button
             onClick={handleBuyNowClick}
-            className="bg-black text-white text-xs font-bold uppercase tracking-wider py-4 px-4 rounded hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md"
+            disabled={soldOut}
+            className="bg-black text-white text-xs font-bold uppercase tracking-wider py-4 px-4 rounded hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Zap className="w-4 h-4 fill-white" />
-            BUY NOW
+            {soldOut ? "SOLD OUT" : "BUY NOW"}
           </button>
         </div>
       </div>

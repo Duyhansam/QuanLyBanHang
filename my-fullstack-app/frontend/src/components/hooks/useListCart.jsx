@@ -69,6 +69,8 @@ export function useListCart() {
 
   // Đã đăng nhập thì chờ dữ liệu từ server, chưa thì đọc từ localStorage
   const [cart, setCart] = useState(() => (token ? [] : readGuest()));
+  // Ref luôn giữ cart MỚI NHẤT. State `cart` trong closure có thể bị cũ nếu người dùng bấm liên tiếp rất nhanh
+  // (React chưa kịp render lại), nên các hàm thêm / sửa / xóa đọc từ ref.current để không bị mất thao tác.
   const cartRef = useRef(cart);
 
   // Ghi state; chỉ lưu localStorage khi chưa đăng nhập
@@ -81,12 +83,16 @@ export function useListCart() {
   const handleError = (err) => {
     if (err?.status === 401) {
       logout();
-      toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.");
+      toast.error("Your session has expired. Please sign in again.");
+    } else if (err?.status === 409) {
+      toast.error(err.message); // ví dụ "... (size 40) chỉ còn 2 sản phẩm!"
     } else {
-      toast.error("Không thể đồng bộ giỏ hàng với máy chủ.");
+      toast.error("Could not sync your cart with the server.");
     }
   };
 
+  // Tải lại dữ liệu thật từ server. Dùng để 'hoàn tác' giao diện khi server từ chối một thao tác:
+  // giao diện được cập nhật trước cho mượt (optimistic update), nếu lỗi thì quay về dữ liệu đúng của server.
   const reload = () =>
     apiFetch("/api/cart", token)
       .then((rows) => commit(rows.map(fromServer)))
@@ -110,6 +116,8 @@ export function useListCart() {
       return;
     }
 
+    // cancelled: nếu người dùng đăng xuất / đổi tài khoản trước khi request xong thì bỏ qua kết quả cũ,
+    // tránh ghi đè dữ liệu của tài khoản mới bằng dữ liệu của tài khoản cũ.
     let cancelled = false;
     syncCart(token)
       .then((rows) => {

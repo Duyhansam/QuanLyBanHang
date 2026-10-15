@@ -38,9 +38,10 @@ export function CompareProvider({ children }) {
     toast.success("Added to compare!");
   };
 
+  // Xóa sản phẩm khỏi danh sách so sánh
   const handleRemoveCompare = (id) =>
     setCompareList((prev) => prev.filter((item) => item.id !== id));
-
+  // Xóa tất cả sản phẩm khỏi danh sách so sánh
   const handleClearCompare = () => setCompareList([]);
 
   return (

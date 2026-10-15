@@ -1,6 +1,11 @@
 import { useWishList } from "./components/hooks/useWithList.jsx";
 import { useListCart } from "./components/hooks/useListCart.jsx";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer.jsx";
 import Home from "./components/pages/Home.jsx";
@@ -18,13 +23,24 @@ import AdminPage from "./components/pages/Admin/AdminPage.jsx";
 import CheckoutPage from "./components/pages/CheckoutPage.jsx";
 import ProductDetailWrapper from "./components/pages/ProductDetail/ProductDetailWrapper.jsx";
 import ScrollToTop from "./components/OptimizeUI/ScrollToTop.jsx";
+import ErrorBoundary from "./components/OptimizeUI/ErrorBoundary.jsx";
+import NotFound from "./components/pages/NotFound.jsx";
 import { Toaster } from "react-hot-toast";
-import AuthPage from "./components/pages/AuthPage.jsx";
+import AuthPage from "./components/pages/Auth/AuthPage.jsx";
 import { AuthProvider } from "./components/hooks/useAuth.jsx";
 import { CompareProvider } from "./components/hooks/useCompare.jsx";
 import ComparePage from "./components/pages/Compare/ComparePage.jsx";
 import CompareBar from "./components/pages/Compare/CompareBar.jsx";
+import OrdersPage from "./components/pages/Orders/OrdersPage.jsx";
+import OrderDetailPage from "./components/pages/Orders/OrderDetailPage.jsx";
+import AdminOrdersPage from "./components/pages/Orders/AdminOrdersPage.jsx";
+import InfoPage from "./components/pages/Info/InfoPage.jsx";
+import ProfilePage from "./components/pages/Auth/ProfilePage.jsx";
+import ForgotPasswordPage from "./components/pages/Auth/ForgotPasswordPage.jsx";
+import ResetPasswordPage from "./components/pages/Auth/ResetPasswordPage.jsx";
 function AppContent() {
+  const location = useLocation();
+
   // 1. Sử dụng custom hook useWishList để quản lý wishlist
   const { wishlist, handleToggleWishlist, wishlistCount } = useWishList();
 
@@ -49,134 +65,145 @@ function AppContent() {
           <Header wishlistCount={wishlistCount} cartCount={cartCount} />
         </header>{" "}
         <div>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Home
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  handleAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route
-              path="/shop"
-              element={
-                <Shop
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  cart={cart}
-                  handleAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route
-              path="/men"
-              element={
-                <Men
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  handleAddToCart={handleAddToCart}
-                  cart={cart}
-                />
-              }
-            />
-            <Route
-              path="/women"
-              element={
-                <Women
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  handleAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route
-              path="/kids"
-              element={
-                <Kid
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  handleAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route path="/brands" element={<Brands />} />
-            <Route
-              path="/brands/:slug"
-              element={
-                <BrandPage
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  handleAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route
-              path="/sale"
-              element={
-                <Sale
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  handleAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route
-              path="/category/:slug"
-              element={
-                <CategoryPage
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  handleAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route
-              path="/product/:id"
-              element={
-                <ProductDetailWrapper
-                  wishlist={wishlist}
-                  handleAddToWishlist={handleToggleWishlist}
-                  onAddToCart={handleAddToCart}
-                />
-              }
-            />
-            <Route
-              path="/wishlist"
-              element={
-                <WishListPage
-                  wishlist={wishlist}
-                  onAddToCart={handleAddToCart}
-                  handleAddToWishlist={handleToggleWishlist}
-                />
-              }
-            />
-            <Route
-              path="/cart"
-              element={
-                <CartPage
-                  cart={cart}
-                  onRemove={handleRemoveFromCart}
-                  onIncrease={handleIncreaseQuantity}
-                  onDecrease={handleDecreaseQuantity}
-                />
-              }
-            />
-            <Route
-              path="/checkout"
-              element={
-                <CheckoutPage cart={cart} onClearCart={handleClearCart} />
-              }
-            />
-            <Route
-              path="/compare"
-              element={<ComparePage onAddToCart={handleAddToCart} />}
-            />
-            <Route path="/login" element={<AuthPage />} />{" "}
-          </Routes>
+          {/* resetKey: đổi trang thì tự thoát khỏi màn hình lỗi */}
+          <ErrorBoundary resetKey={location.pathname}>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    handleAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route
+                path="/shop"
+                element={
+                  <Shop
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    cart={cart}
+                    handleAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route
+                path="/men"
+                element={
+                  <Men
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    handleAddToCart={handleAddToCart}
+                    cart={cart}
+                  />
+                }
+              />
+              <Route
+                path="/women"
+                element={
+                  <Women
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    handleAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route
+                path="/kids"
+                element={
+                  <Kid
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    handleAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route path="/brands" element={<Brands />} />
+              <Route
+                path="/brands/:slug"
+                element={
+                  <BrandPage
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    handleAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route
+                path="/sale"
+                element={
+                  <Sale
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    handleAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route
+                path="/category/:slug"
+                element={
+                  <CategoryPage
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    handleAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route
+                path="/product/:id"
+                element={
+                  <ProductDetailWrapper
+                    wishlist={wishlist}
+                    handleAddToWishlist={handleToggleWishlist}
+                    onAddToCart={handleAddToCart}
+                  />
+                }
+              />
+              <Route
+                path="/wishlist"
+                element={
+                  <WishListPage
+                    wishlist={wishlist}
+                    onAddToCart={handleAddToCart}
+                    handleAddToWishlist={handleToggleWishlist}
+                  />
+                }
+              />
+              <Route
+                path="/cart"
+                element={
+                  <CartPage
+                    cart={cart}
+                    onRemove={handleRemoveFromCart}
+                    onIncrease={handleIncreaseQuantity}
+                    onDecrease={handleDecreaseQuantity}
+                  />
+                }
+              />
+              <Route
+                path="/checkout"
+                element={
+                  <CheckoutPage cart={cart} onClearCart={handleClearCart} />
+                }
+              />
+              <Route
+                path="/compare"
+                element={<ComparePage onAddToCart={handleAddToCart} />}
+              />
+              <Route path="/login" element={<AuthPage />} />{" "}
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/orders/:id" element={<OrderDetailPage />} />
+              <Route path="/admin/orders" element={<AdminOrdersPage />} />
+              <Route path="/info/:slug" element={<InfoPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ErrorBoundary>
         </div>
         <Footer />
         <CompareBar />
