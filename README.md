@@ -77,3 +77,19 @@ kanza-store/
     │   ├── services/              # Kết nối & gọi RESTful API từ Backend
     │   └── context/               # Quản lý trạng thái ứng dụng (AuthContext, CartContext)
     └── package.json               # Các gói phụ thuộc Frontend
+
+🚀 Hướng dẫn cài đặt & Chạy ứng dụngYêu cầu tiên quyết (Prerequisites)Java: JDK 17+Node.js: v18+ (dành cho Frontend)Database: MySQL Server 8.0+Build Tool: Maven1. Cấu hình & Chạy Backend (Spring Boot)Clone dự án:Bashgit clone [https://github.com/your-username/kanza-store.git](https://github.com/your-username/kanza-store.git)
+cd kanza-store/backend
+Cấu hình Cơ sở dữ liệu:Mở file src/main/resources/application.properties và chỉnh sửa thông tin MySQL:Propertiesspring.datasource.url=jdbc:mysql://localhost:3306/kanza_store?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+Khởi chạy Server Backend:Bashmvn spring-boot:run
+
+🌐 Backend API sẽ chạy tại: http://localhost:80802. Cấu hình & Chạy FrontendDi chuyển vào thư mục frontend:Bashcd ../frontend
+Cài đặt các gói phụ thuộc (Dependencies):Bashnpm install
+Cấu hình môi trường (Environment Variables):Tạo file .env tại thư mục gốc frontend/:Đoạn mãVITE_API_BASE_URL=http://localhost:8080/api
+Chạy ứng dụng Frontend:Bashnpm run dev
+# Hoặc: npm start (nếu dùng Create React App)
+
+🌐 Frontend sẽ chạy tại: http://localhost:5173 (hoặc http://localhost:3000)🔑 Tài khoản thử nghiệm (Demo Credentials)Vai tròEmailMật khẩuAdminadmin@kanza.comadmin123Useruser@kanza.comuser123🤝 Đóng góp (Contributing)Fork dự ánTạo nhánh tính năng (git checkout -b feature/AmazingFeature)Commit thay đổi (git commit -m 'Add some AmazingFeature')Push lên nhánh (git push origin feature/AmazingFeature)Mở một Pull Request📝 Giấy phép (License)Dự án được phân phối dưới giấy phép MIT License. Mọi thông tin chi tiết vui lòng xem file LICENSE.
