@@ -1,56 +1,79 @@
-# 🛒 Kanza Store - E-Commerce Web Application
+# 🛒 Kanza Store - Fullstack E-Commerce Platform
 
 <p align="center">
   <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg" alt="Spring Boot">
   <img src="https://img.shields.io/badge/Java-17%20%2F%2021-orange.svg" alt="Java Version">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
+  <img src="https://img.shields.io/badge/Frontend-React%20%2F%20Vue%20%2F%20HTML5-blue.svg" alt="Frontend">
+  <img src="https://img.shields.io/badge/Security-JWT-red.svg" alt="JWT Security">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
 </p>
 
-**Kanza Store** là một ứng dụng thương mại điện tử (E-Commerce) toàn diện, được xây dựng bằng **Spring Boot** (Backend) kết hợp với giao diện hiện đại, cung cấp đầy đủ các tính năng mua sắm trực tuyến từ quản lý sản phẩm, giỏ hàng, thanh toán đơn hàng đến hệ thống xác thực người dùng bảo mật.
+> **Kanza Store** là một nền tảng thương mại điện tử (E-Commerce) hiện đại, tích hợp đầy đủ tính năng mua sắm trực tuyến, quản lý sản phẩm, đơn hàng, người dùng và hệ thống quản trị (Admin Dashboard). Dự án được xây dựng với kiến trúc mô-đun hóa kết hợp giữa **Spring Boot RESTful API** ở Backend và giao diện **Frontend** tối ưu trải nghiệm người dùng.
 
 ---
 
-## ✨ Tính năng chính
+## ✨ Tính năng nổi bật
 
-### 👤 Khách hàng & Người dùng
-* **Xác thực & Bảo mật:** Đăng ký, đăng nhập an toàn sử dụng **JWT (JSON Web Token)**, hỗ trợ tính năng quên mật khẩu và đổi mật khẩu.
-* **Quản lý sản phẩm:** Xem danh sách sản phẩm, lọc theo danh mục, thương hiệu, kích cỡ (size), tìm kiếm và xem chi tiết sản phẩm.
-* **Giỏ hàng & Wishlist (Yêu thích):** Thêm/sửa/xóa sản phẩm khỏi giỏ hàng, đồng bộ giỏ hàng và danh sách yêu thích.
-* **Đặt hàng & Thanh toán:** Tạo đơn hàng mới, theo dõi trạng thái đơn hàng.
-* **Đánh giá & Bình luận:** Gửi đánh giá và bình luận sản phẩm sau khi mua hàng.
-* **Bản tin (Newsletter):** Đăng ký nhận thông tin khuyến mãi qua email.
+### 🛍️ Khách hàng (Client Portal)
+* **Xác thực & Bảo mật (Auth):** Đăng ký, đăng nhập an toàn với **JWT (JSON Web Token)**, xác thực qua Email, lấy lại mật khẩu quên.
+* **Khám phá sản phẩm (Catalog & Search):** Xem danh sách sản phẩm, bộ lọc đa tiêu chí (danh mục, thương hiệu, mức giá, kích cỡ/size), tìm kiếm từ khóa và chi tiết sản phẩm.
+* **Giỏ hàng & Đơn hàng (Cart & Checkout):** Quản lý giỏ hàng realtime, áp dụng mã giảm giá, đặt hàng và theo dõi lịch sử/trạng thái đơn hàng.
+* **Yêu thích & Đánh giá (Wishlist & Reviews):** Lưu sản phẩm yêu thích, gửi nhận xét và chấm điểm sao sản phẩm đã mua.
+* **Bản tin & Khuyến mãi (Newsletter):** Đăng ký email nhận ưu đãi hàng tuần.
 
-### 🛠️ Quản trị viên (Admin)
-* **Quản lý sản phẩm & Tồn kho:** Thêm, sửa, xóa sản phẩm, quản lý số lượng tồn kho theo kích cỡ (Size Stock).
-* **Quản lý đơn hàng:** Xem danh sách đơn hàng toàn hệ thống, cập nhật trạng thái đơn hàng (Đang xử lý, Đang giao, Đã hoàn thành, Hủy...).
-* **Quản lý danh mục & Thương hiệu:** Thêm và quản lý các danh mục trang chủ, banner quảng cáo, slide trang chủ.
+### 🛠️ Quản trị viên (Admin Dashboard)
+* **Quản lý sản phẩm & Kho hàng (Inventory):** CRUD sản phẩm, phân loại danh mục, thương hiệu, quản lý tồn kho theo biến thể (Size/Color Stock).
+* **Quản lý đơn hàng (Order Management):** Duyệt đơn, cập nhật trạng thái vận chuyển (Đang xử lý, Đang giao, Đã giao, Hủy đơn).
+* **Quản lý Nội dung & Giao diện (CMS):** Cấu hình Banner, Slide trang chủ, danh mục nổi bật và chương trình khuyến mãi.
 
 ---
 
-## 🗂️ Cấu trúc dự án
+## 🛠️ Công nghệ sử dụng (Tech Stack)
+
+### Backend
+* **Language & Framework:** Java 17/21, Spring Boot 3.x
+* **Security:** Spring Security, JWT (JSON Web Token)
+* **Database & ORM:** MySQL, Spring Data JPA / Hibernate
+* **Utilities:** Lombok, Spring Mail, Maven
+
+### Frontend
+* **UI Framework/Library:** React.js / Vue.js (hoặc HTML5/CSS3, JavaScript, Bootstrap/Tailwind CSS)
+* **State Management & API:** Axios / Redux Toolkit / React Query
+* **Icons & Fonts:** FontAwesome / React Icons, Google Fonts
+
+---
+
+## 🗂️ Cấu trúc dự án (Project Architecture)
 
 ```text
-src/
-├── main/
-│   ├── java/
-│   │   └── com/
-│   │       └── kanza/
-│   │           └── store/
-│   │               ├── auth/          # Xác thực (JWT, Login, Register, Password Reset)
-│   │               ├── brand/         # Quản lý thương hiệu
-│   │               ├── cart/          # Giỏ hàng
-│   │               ├── config/        # Cấu hình bảo mật (SecurityConfig, WebConfig)
-│   │               ├── exception/     # Xử lý ngoại lệ toàn cục (GlobalExceptionHandler)
-│   │               ├── home/          # Banner, Slide, Danh mục trang chủ
-│   │               ├── mail/          # Gửi email hệ thống
-│   │               ├── newsletter/    # Đăng ký nhận bản tin
-│   │               ├── order/         # Quản lý đơn hàng (User & Admin)
-│   │               ├── product/       # Quản lý sản phẩm, biến thể, tồn kho
-│   │               ├── review/        # Đánh giá sản phẩm
-│   │               ├── upload/        # Xử lý tải lên tệp tin/hình ảnh
-│   │               ├── wishlist/      # Danh sách sản phẩm yêu thích
-│   │               └── StoreApplication.java # Lớp khởi chạy Spring Boot
-│   └── resources/
-│       ├── data/                      # Dữ liệu mẫu khởi tạo (SQL cho brands, products)
-│       ├── static/                    # Tài nguyên tĩnh (Hình ảnh banner, logo, sản phẩm...)
-│       └── application.properties     # Cấu hình kết nối cơ sở dữ liệu và ứng dụng
+kanza-store/
+├── backend/                       # Backend Spring Boot Project
+│   ├── src/main/java/com/kanza/store/
+│   │   ├── auth/                  # Lớp xác thực (Login, Register, JWT, Password)
+│   │   ├── brand/                 # Quản lý thương hiệu
+│   │   ├── cart/                  # Quản lý giỏ hàng
+│   │   ├── config/                # Cấu hình hệ thống (SecurityConfig, WebConfig)
+│   │   ├── exception/             # Xử lý ngoại lệ tập trung (GlobalExceptionHandler)
+│   │   ├── home/                  # Banner, Slide trang chủ
+│   │   ├── mail/                  # Dịch vụ gửi email thông báo
+│   │   ├── newsletter/            # Đăng ký nhận tin tức
+│   │   ├── order/                 # Quản lý đơn hàng
+│   │   ├── product/               # Quản lý sản phẩm, tồn kho (Size/Stock)
+│   │   ├── review/                # Đánh giá & Bình luận
+│   │   ├── upload/                # Tải lên hình ảnh / tệp tin
+│   │   ├── wishlist/              # Sản phẩm yêu thích
+│   │   └── StoreApplication.java  # File khởi chạy chính của Spring Boot
+│   └── src/main/resources/
+│       ├── application.properties # Cấu hình ứng dụng & kết nối Database
+│       ├── data/                  # Script SQL dữ liệu mẫu
+│       └── static/                # Tệp tĩnh (ảnh sản phẩm, banner...)
+│
+└── frontend/                      # Frontend Application
+    ├── public/                    # Tài nguyên công khai (Favicon, Index.html)
+    ├── src/
+    │   ├── assets/                # Hình ảnh, icon, styles
+    │   ├── components/            # Các thành phần giao diện tái sử dụng (Header, Footer, Card...)
+    │   ├── pages/                 # Các trang chính (Home, Shop, Cart, Checkout, Admin...)
+    │   ├── services/              # Kết nối & gọi RESTful API từ Backend
+    │   └── context/               # Quản lý trạng thái ứng dụng (AuthContext, CartContext)
+    └── package.json               # Các gói phụ thuộc Frontend
