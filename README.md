@@ -1,103 +1,161 @@
-# 🛒 Kanza Store - Fullstack E-Commerce Platform
+# Kanza Store - Fullstack E-Commerce
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg" alt="Spring Boot">
-  <img src="https://img.shields.io/badge/Java-17%20%2F%2021-orange.svg" alt="Java Version">
-  <img src="https://img.shields.io/badge/Frontend-React%20%2F%20Vue%20%2F%20HTML5-blue.svg" alt="Frontend">
-  <img src="https://img.shields.io/badge/Security-JWT-red.svg" alt="JWT Security">
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
-</p>
+Website bán giày trực tuyến gồm **React + Tailwind CSS** ở frontend và **Spring Boot + MySQL** ở backend. Dự án có đủ luồng mua hàng thật: duyệt sản phẩm, giỏ hàng, đặt hàng có trừ tồn kho theo size, đánh giá sản phẩm, và trang quản trị cho admin.
 
-> **Kanza Store** là một nền tảng thương mại điện tử (E-Commerce) hiện đại, tích hợp đầy đủ tính năng mua sắm trực tuyến, quản lý sản phẩm, đơn hàng, người dùng và hệ thống quản trị (Admin Dashboard). Dự án được xây dựng với kiến trúc mô-đun hóa kết hợp giữa **Spring Boot RESTful API** ở Backend và giao diện **Frontend** tối ưu trải nghiệm người dùng.
+![Java](https://img.shields.io/badge/Java-25-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-brightgreen)
+![React](https://img.shields.io/badge/React-Vite-blue)
+![Tailwind](https://img.shields.io/badge/Tailwind%20CSS-4-38bdf8)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1)
+![Auth](https://img.shields.io/badge/Auth-JWT-red)
 
----
+## Ảnh chụp màn hình
 
-## ✨ Tính năng nổi bật
+| Trang chủ | Trang sản phẩm |
+|---|---|
+| ![Home](docs/screenshots/home.png) | ![Product](docs/screenshots/product.png) |
 
-### 🛍️ Khách hàng (Client Portal)
-* **Xác thực & Bảo mật (Auth):** Đăng ký, đăng nhập an toàn với **JWT (JSON Web Token)**, xác thực qua Email, lấy lại mật khẩu quên.
-* **Khám phá sản phẩm (Catalog & Search):** Xem danh sách sản phẩm, bộ lọc đa tiêu chí (danh mục, thương hiệu, mức giá, kích cỡ/size), tìm kiếm từ khóa và chi tiết sản phẩm.
-* **Giỏ hàng & Đơn hàng (Cart & Checkout):** Quản lý giỏ hàng realtime, áp dụng mã giảm giá, đặt hàng và theo dõi lịch sử/trạng thái đơn hàng.
-* **Yêu thích & Đánh giá (Wishlist & Reviews):** Lưu sản phẩm yêu thích, gửi nhận xét và chấm điểm sao sản phẩm đã mua.
-* **Bản tin & Khuyến mãi (Newsletter):** Đăng ký email nhận ưu đãi hàng tuần.
+| Thanh toán | Quản lý đơn hàng (Admin) |
+|---|---|
+| ![Checkout](docs/screenshots/checkout.png) | ![Admin orders](docs/screenshots/admin-orders.png) |
 
-### 🛠️ Quản trị viên (Admin Dashboard)
-* **Quản lý sản phẩm & Kho hàng (Inventory):** CRUD sản phẩm, phân loại danh mục, thương hiệu, quản lý tồn kho theo biến thể (Size/Color Stock).
-* **Quản lý đơn hàng (Order Management):** Duyệt đơn, cập nhật trạng thái vận chuyển (Đang xử lý, Đang giao, Đã giao, Hủy đơn).
-* **Quản lý Nội dung & Giao diện (CMS):** Cấu hình Banner, Slide trang chủ, danh mục nổi bật và chương trình khuyến mãi.
+## Tính năng
 
----
+### Khách hàng
+- **Tài khoản:** đăng ký, đăng nhập (JWT), quên và đặt lại mật khẩu, trang hồ sơ, đổi mật khẩu.
+- **Duyệt sản phẩm:** trang Shop, Men, Women, Kids, Sale; trang theo loại giày (Running, Walking, Boots...); trang theo thương hiệu; tìm kiếm theo tên; sắp xếp theo giá và tên.
+- **Chi tiết sản phẩm:** thư viện ảnh, chọn màu, chọn size (size hết hàng bị khóa), đánh giá sao và bình luận.
+- **So sánh sản phẩm:** chọn tối đa 3 sản phẩm để so sánh cạnh nhau.
+- **Giỏ hàng và Wishlist:** khách chưa đăng nhập lưu trên trình duyệt, khi đăng nhập thì tự gộp vào tài khoản; đã đăng nhập thì lưu ở server.
+- **Đặt hàng:** thanh toán giỏ hàng hoặc "Mua ngay", xem lịch sử đơn, xem chi tiết đơn, hủy đơn khi còn ở trạng thái chờ xác nhận.
+- **Đánh giá:** chỉ người đã nhận hàng mới được đánh giá, mỗi người một đánh giá cho mỗi sản phẩm và có thể sửa hoặc xóa.
+- **Khác:** đăng ký newsletter, các trang thông tin cửa hàng, trang 404 và màn hình báo lỗi thay vì trang trắng.
 
-## 🛠️ Công nghệ sử dụng (Tech Stack)
+### Quản trị viên (role ADMIN)
+- **Sản phẩm:** thêm, sửa, xóa; nhiều màu cho mỗi sản phẩm; upload ảnh; quản lý tồn kho theo từng size.
+- **Đơn hàng:** xem toàn bộ đơn, lọc theo trạng thái, tìm theo mã đơn, tên hoặc số điện thoại, đổi trạng thái theo đúng luồng
+  `Chờ xác nhận -> Đã xác nhận -> Đang giao -> Đã giao` (hủy được khi chưa giao).
 
-### Backend
-* **Language & Framework:** Java 17/21, Spring Boot 3.x
-* **Security:** Spring Security, JWT (JSON Web Token)
-* **Database & ORM:** MySQL, Spring Data JPA / Hibernate
-* **Utilities:** Lombok, Spring Mail, Maven
+## Điểm kỹ thuật đáng chú ý
 
-### Frontend
-* **UI Framework/Library:** React.js / Vue.js (hoặc HTML5/CSS3, JavaScript, Bootstrap/Tailwind CSS)
-* **State Management & API:** Axios / Redux Toolkit / React Query
-* **Icons & Fonts:** FontAwesome / React Icons, Google Fonts
+- **Giá do server tính:** trình duyệt không gửi giá, backend lấy giá từ DB khi tạo đơn nên không thể sửa giá từ phía client.
+- **Tồn kho an toàn khi nhiều người mua cùng lúc:** trừ kho bằng một câu `UPDATE ... WHERE quantity >= :qty` duy nhất, nên hai người mua món cuối cùng thì chỉ một người thành công. Hủy đơn (do khách hoặc admin) thì tự trả hàng về kho, đúng một lần.
+- **Đặt hàng là một giao dịch:** lưu đơn, trừ kho và xóa giỏ hàng cùng thành công hoặc cùng thất bại.
+- **Chặn dò mật khẩu:** đếm lần đăng nhập sai theo cặp email + IP và theo IP, quá giới hạn thì khóa 15 phút (HTTP 429). Email không tồn tại cũng bị đếm và vẫn tốn thời gian băm mật khẩu như email có thật, nên không dò được email nào đã đăng ký.
+- **Phân quyền:** JWT chứa role, `SecurityConfig` khóa các API thêm, sửa, xóa sản phẩm, `/api/admin/**` cho ADMIN; mỗi người chỉ xem và hủy được đơn hàng của chính mình.
+- **Upload ảnh an toàn:** kiểm tra loại ảnh bằng các byte đầu của file (không tin tên file hay `Content-Type`), từ chối SVG, tên file do server sinh bằng UUID để chống ghi đè và path traversal, giới hạn 5MB.
+- **Xử lý lỗi tập trung:** `GlobalExceptionHandler` trả lỗi dạng `{ "message": "..." }`; lỗi bất ngờ chỉ ghi vào log, không lộ chi tiết ra ngoài.
+- **Bí mật nằm ngoài code:** mật khẩu DB và khóa JWT đọc từ biến môi trường.
 
----
+## Công nghệ
 
-## 🗂️ Cấu trúc dự án (Project Architecture)
+**Backend:** Java 25, Spring Boot 4.1, Spring Security (OAuth2 Resource Server, JWT), Spring Data JPA / Hibernate, MySQL 8, Lombok, Maven.
+
+**Frontend:** React, Vite, Tailwind CSS 4, React Router, lucide-react, react-hot-toast. Quản lý trạng thái bằng React Context và custom hooks (`useAuth`, giỏ hàng, wishlist, so sánh).
+
+## Cấu trúc dự án
 
 ```text
 kanza-store/
-├── backend/                       # Backend Spring Boot Project
+├── backend/
 │   ├── src/main/java/com/kanza/store/
-│   │   ├── auth/                  # Lớp xác thực (Login, Register, JWT, Password)
-│   │   ├── brand/                 # Quản lý thương hiệu
-│   │   ├── cart/                  # Quản lý giỏ hàng
-│   │   ├── config/                # Cấu hình hệ thống (SecurityConfig, WebConfig)
-│   │   ├── exception/             # Xử lý ngoại lệ tập trung (GlobalExceptionHandler)
-│   │   ├── home/                  # Banner, Slide trang chủ
-│   │   ├── mail/                  # Dịch vụ gửi email thông báo
-│   │   ├── newsletter/            # Đăng ký nhận tin tức
-│   │   ├── order/                 # Quản lý đơn hàng
-│   │   ├── product/               # Quản lý sản phẩm, tồn kho (Size/Stock)
-│   │   ├── review/                # Đánh giá & Bình luận
-│   │   ├── upload/                # Tải lên hình ảnh / tệp tin
-│   │   ├── wishlist/              # Sản phẩm yêu thích
-│   │   └── StoreApplication.java  # File khởi chạy chính của Spring Boot
+│   │   ├── auth/         # Đăng ký, đăng nhập, JWT, hồ sơ, đổi và đặt lại mật khẩu, chặn dò mật khẩu
+│   │   ├── brand/        # Thương hiệu
+│   │   ├── cart/         # Giỏ hàng
+│   │   ├── config/       # SecurityConfig, WebConfig
+│   │   ├── exception/    # GlobalExceptionHandler, ApiException
+│   │   ├── home/         # Slide, danh mục, banner trang chủ
+│   │   ├── mail/         # Gửi email (bản dev chỉ in ra console)
+│   │   ├── newsletter/   # Đăng ký nhận tin
+│   │   ├── order/        # Đơn hàng, đơn hàng cho admin
+│   │   ├── product/      # Sản phẩm, biến thể màu, tồn kho theo size
+│   │   ├── review/       # Đánh giá sản phẩm
+│   │   ├── upload/       # Upload ảnh (admin)
+│   │   └── wishlist/     # Yêu thích
 │   └── src/main/resources/
-│       ├── application.properties # Cấu hình ứng dụng & kết nối Database
-│       ├── data/                  # Script SQL dữ liệu mẫu
-│       └── static/                # Tệp tĩnh (ảnh sản phẩm, banner...)
-│
-└── frontend/                      # Frontend Application
-    ├── public/                    # Tài nguyên công khai (Favicon, Index.html)
-    ├── src/
-    │   ├── assets/                # Hình ảnh, icon, styles
-    │   ├── components/            # Các thành phần giao diện tái sử dụng (Header, Footer, Card...)
-    │   ├── pages/                 # Các trang chính (Home, Shop, Cart, Checkout, Admin...)
-    │   ├── services/              # Kết nối & gọi RESTful API từ Backend
-    │   └── context/               # Quản lý trạng thái ứng dụng (AuthContext, CartContext)
-    └── package.json               # Các gói phụ thuộc Frontend
+│       ├── application.properties
+│       ├── application.properties.exam
+│       ├── data/         # SQL dữ liệu mẫu
+│       └── static/       # Ảnh sản phẩm, banner, thương hiệu
+└── frontend/
+    └── src/
+        ├── App.jsx       # Khai báo các route
+        └── components/
+            ├── Header/  Footer/  Body/   # Thành phần giao diện dùng chung
+            ├── pages/                    # Các trang (Home, Shop, Checkout, Orders, Admin...)
+            ├── hooks/                    # useAuth, useFetch, giỏ hàng, wishlist...
+            └── OptimizeUI/               # ErrorBoundary, ScrollToTop
+```
 
-🚀 Hướng dẫn cài đặt & Chạy ứng dụng
-Yêu cầu tiên quyết (Prerequisites)
-Java: JDK 17+
-Node.js: v18+ (dành cho Frontend)
-Database: MySQL Server 8.0+
-Build Tool: Maven1.
-Cấu hình & Chạy Backend (Spring Boot)
-Clone dự án:Bashgit clone [https://github.com/your-username/kanza-store.git](https://github.com/your-username/kanza-store.git)
+## Chạy dự án trên máy
+
+### Yêu cầu
+- JDK 25 (theo `pom.xml`)
+- Node.js 20 trở lên
+- MySQL 8
+
+### 1. Tạo cơ sở dữ liệu
+```sql
+CREATE DATABASE kanza_store_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### 2. Chạy backend
+```bash
+git clone https://github.com/<ten-cua-ban>/kanza-store.git
 cd kanza-store/backend
 
-Cấu hình Cơ sở dữ liệu:Mở file src/main/resources/application.properties và chỉnh sửa thông tin MySQL:Propertiesspring.datasource.url=jdbc:mysql://localhost:3306/kanza_store?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-spring.datasource.username=root
-spring.datasource.password=your_password
-spring.jpa.hibernate.ddl-auto=update
-Khởi chạy Server Backend:Bashmvn spring-boot:run
+# Tạo file cấu hình bí mật từ file mẫu rồi điền giá trị thật
+cp .env.example .env
 
-🌐 Backend API sẽ chạy tại: http://localhost:80802. Cấu hình & Chạy FrontendDi chuyển vào thư mục frontend:Bashcd ../frontend
-Cài đặt các gói phụ thuộc (Dependencies):Bashnpm install
-Cấu hình môi trường (Environment Variables):Tạo file .env tại thư mục gốc frontend/:Đoạn mãVITE_API_BASE_URL=http://localhost:8080/api
-Chạy ứng dụng Frontend:Bashnpm run dev
-# Hoặc: npm start (nếu dùng Create React App)
+./mvnw spring-boot:run
+```
+Trong `.env`: `DB_PASSWORD` là mật khẩu MySQL, `JWT_SECRET` là chuỗi ngẫu nhiên dài ít nhất 32 ký tự (tạo bằng `openssl rand -base64 48`). File `.env` đã nằm trong `.gitignore`, **không commit** file này.
 
-🌐 Frontend sẽ chạy tại: http://localhost:5173 (hoặc http://localhost:3000)🔑 Tài khoản thử nghiệm (Demo Credentials)Vai tròEmailMật khẩuAdminadmin@kanza.comadmin123Useruser@kanza.comuser123🤝 Đóng góp (Contributing)Fork dự ánTạo nhánh tính năng (git checkout -b feature/AmazingFeature)Commit thay đổi (git commit -m 'Add some AmazingFeature')Push lên nhánh (git push origin feature/AmazingFeature)Mở một Pull Request📝 Giấy phép (License)Dự án được phân phối dưới giấy phép MIT License. Mọi thông tin chi tiết vui lòng xem file LICENSE.
+Lần chạy đầu, Hibernate tự tạo các bảng (`ddl-auto=update`). Backend chạy tại `http://localhost:8080`.
+
+### 3. Nạp dữ liệu mẫu
+```bash
+mysql -u root -p kanza_store_db < src/main/resources/data/seed.sql
+```
+File này gồm thương hiệu, sản phẩm, nội dung trang chủ (slide, danh mục, banner) và tồn kho mẫu.
+
+### 4. Tạo tài khoản admin
+Dự án không có tài khoản admin mặc định. Đăng ký một tài khoản bình thường trên web, rồi nâng quyền bằng SQL:
+```sql
+UPDATE users SET role = 'ADMIN' WHERE email = 'email-cua-ban@example.com';
+```
+Sau đó **đăng xuất và đăng nhập lại** (role nằm trong token). Trang quản trị ở `/admin`, quản lý đơn hàng ở `/admin/orders`.
+
+### 5. Chạy frontend
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+Mở `http://localhost:5173`. Vite tự chuyển các đường dẫn `/api` và `/images` sang backend (cấu hình trong `vite.config.js`), nên không cần tạo file `.env` cho frontend.
+
+> **Quên mật khẩu:** ở môi trường dev, backend không gửi email thật mà in nội dung email (kèm link đặt lại mật khẩu) ra console của Spring Boot.
+
+## API chính
+
+| Nhóm | Endpoint | Quyền |
+|---|---|---|
+| Tài khoản | `POST /api/v1/auth/register`, `/login`, `/forgot-password`, `/reset-password` | Công khai |
+| Tài khoản | `GET, PUT /api/v1/auth/me`, `PUT /api/v1/auth/password` | Đăng nhập |
+| Sản phẩm | `GET /api/products`, `GET /api/products/{id}` | Công khai |
+| Sản phẩm | `POST, PUT, DELETE /api/products` | ADMIN |
+| Thương hiệu | `GET /api/brands` | Công khai |
+| Giỏ hàng, Wishlist | `/api/cart`, `/api/wishlist` | Đăng nhập |
+| Đơn hàng | `POST, GET /api/orders`, `GET /api/orders/{id}`, `POST /api/orders/{id}/cancel` | Đăng nhập (chỉ đơn của mình) |
+| Đánh giá | `GET /api/reviews/product/{id}` | Công khai |
+| Đánh giá | `GET /api/reviews/mine`, `POST /api/reviews`, `DELETE /api/reviews/{id}` | Đăng nhập |
+| Newsletter | `POST /api/newsletter/subscribe` | Công khai |
+| Admin | `GET /api/admin/orders`, `PATCH /api/admin/orders/{id}/status`, `POST /api/admin/upload` | ADMIN |
+
+## Hạn chế hiện tại và hướng phát triển
+
+- Chưa tích hợp cổng thanh toán, lựa chọn chuyển khoản hiện chỉ ghi lại phương thức.
+- Email đặt lại mật khẩu mới chỉ in ra console, cần thêm bản gửi qua SMTP khi triển khai thật.
+- Nội dung trang chủ (slide, banner, danh mục) hiện chỉnh bằng SQL, chưa có trang quản trị riêng.
+- Chưa có mã giảm giá, dashboard thống kê cho admin, phân trang phía server.
+- Dữ liệu chặn dò mật khẩu lưu trong RAM của một máy chủ; khi chạy nhiều máy cần chuyển sang Redis.
