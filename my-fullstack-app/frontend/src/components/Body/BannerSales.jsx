@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { useFetch } from "../hooks/useFetch";
+import { Link } from "react-router-dom";
 
 export default function BannerSales() {
   const { data: banner, error } = useFetch("/api/home/banner");
@@ -17,10 +18,12 @@ export default function BannerSales() {
           {banner.title}
         </h3>
         <p className="text-sm text-neutral-300 mb-6">{banner.description}</p>
-        <button className="px-6 py-3 bg-white text-black text-sm font-semibold rounded-xl hover:bg-neutral-200 transition flex items-center gap-2 cursor-pointer">
-          {banner.buttonText}
-          <ArrowRight size={16} />
-        </button>
+        <Link to="/sale" className="w-fit">
+          <button className="px-6 py-3 bg-white text-black text-sm font-semibold rounded-xl hover:bg-neutral-200 transition flex items-center gap-2 cursor-pointer">
+            {banner.buttonText}
+            <ArrowRight size={16} />
+          </button>
+        </Link>
       </div>
 
       <div
