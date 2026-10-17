@@ -13,11 +13,11 @@ Website bán giày trực tuyến gồm **React + Tailwind CSS** ở frontend v�
 
 | Trang chủ                          | Trang sản phẩm                           |
 | ---------------------------------- | ---------------------------------------- |
-| ![Home](docs/screenshots/home.png) | ![Product](docs/screenshots/product.png) |
+| ![Home](my-fullstack-app/docs/screenshots/home.png) | ![Product](my-fullstack-app/docs/screenshots/product.png) |
 
 | Thanh toán                                 | Quản lý đơn hàng (Admin)                           |
 | ------------------------------------------ | -------------------------------------------------- |
-| ![Checkout](docs/screenshots/checkout.png) | ![Admin orders](docs/screenshots/admin-orders.png) |
+| ![Checkout](my-fullstack-app/docs/screenshots/checkout.png) | ![Admin orders](my-fullstack-app/docs/screenshots/admin-orders.png) |
 
 ## Tính năng
 
@@ -58,7 +58,7 @@ Website bán giày trực tuyến gồm **React + Tailwind CSS** ở frontend v�
 ## Cấu trúc dự án
 
 ```text
-kanza-store/
+my-fullstack-app/
 ├── backend/
 │   ├── src/main/java/com/kanza/store/
 │   │   ├── auth/         # Đăng ký, đăng nhập, JWT, hồ sơ, đổi và đặt lại mật khẩu, chặn dò mật khẩu
@@ -107,7 +107,7 @@ CREATE DATABASE kanza_store_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ```bash
 git clone https://github.com/<ten-cua-ban>/kanza-store.git
-cd kanza-store/backend
+cd QuanLyBanHang/my-fullstack-app/backend
 
 # Tạo file cấu hình bí mật từ file mẫu rồi điền giá trị thật
 cp .env.example .env
